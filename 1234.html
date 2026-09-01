@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My portfolio projects</title>
+<style>
+  :root {
+    --page-bg: #eef0f6;
+    --header-bg: #ffffff;
+    --header-border: #e8e6df;
+    --card-bg: #ffffff;
+    --card-border: #e8e6df;
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --shadow-rest: 0 10px 24px rgba(0,0,0,0.10), 0 3px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    --shadow-hover: 0 24px 44px rgba(0,0,0,0.18), 0 8px 16px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.6);
+    --purple: #5b3fd6;
+    --tag-bg: #f1efe8;
+    --btn-bg: #ffffff;
+    --fade-edge: rgba(238,240,246,0);
+    --fade-edge-solid: #eef0f6;
+    --project-image-border: rgba(0,0,0,0.09);
+    --project-image-inset: rgba(255,255,255,0.4);
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+ 
+  body.dark-mode {
+    --page-bg: #14151c;
+    --header-bg: #1b1c25;
+    --header-border: #2b2d3a;
+    --card-bg: #1f2029;
+    --card-border: #30323f;
+    --text-primary: #f0efec;
+    --text-secondary: #a7a6b3;
+    --shadow-rest: 0 10px 24px rgba(0,0,0,0.35), 0 3px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
+    --shadow-hover: 0 24px 44px rgba(0,0,0,0.5), 0 8px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
+    --purple: #9c8bff;
+    --tag-bg: #2a2c38;
+    --btn-bg: #262733;
+    --fade-edge: rgba(20,21,28,0);
+    --fade-edge-solid: #14151c;
+    --project-image-border: rgba(255,255,255,0.08);
+    --project-image-inset: rgba(255,255,255,0.05);
+  }
+ 
+  * { box-sizing: border-box; }
+ 
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--page-bg);
+    margin: 0;
+    transition: background 0.2s ease;
+  }
+ 
+  .site-header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--header-border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+    z-index: 20;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+ 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+ 
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--header-border);
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  }
+ 
+  .theme-toggle:hover { transform: scale(1.08); }
+ 
+  .theme-toggle svg { width: 16px; height: 16px; }
+ 
+  .theme-toggle .icon-moon { display: none; }
+  body.dark-mode .theme-toggle .icon-sun { display: none; }
+  body.dark-mode .theme-toggle .icon-moon { display: block; }
+ 
+  /* Hamburger menu button — hidden on desktop, shown only on narrow/mobile screens */
+  .nav-toggle {
+    display: none;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--header-border);
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+ 
+  .nav-toggle svg { width: 18px; height: 18px; }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle.open .icon-menu { display: none; }
+  .nav-toggle.open .icon-close { display: block; }
+ 
+  .site-header .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+ 
+  .avatar-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: none;
+    background: #ece9fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #d9d4fb;
+  }
+ 
+  .avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+ 
+  .site-header .brand-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--purple);
+    margin: 0;
+  }
+ 
+  .site-header .brand-title {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+  }
+ 
+  .site-header nav {
+    display: flex;
+    gap: 28px;
+  }
+ 
+  .site-header nav a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 6px 4px;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+ 
+  .site-header nav a:hover { color: var(--purple); border-bottom-color: #d9d4fb; }
+ 
+  .site-header nav a.active { color: var(--purple); border-bottom-color: var(--purple); }
+ 
+  .page { max-width: 1300px; margin: 0 auto; padding: 28px 20px 60px; position: relative; z-index: 2; }
+ 
+  .hero { text-align: center; margin-bottom: 24px; }
+ 
+  .hero h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--purple);
+    margin: 0 0 12px;
+  }
+ 
+  .hero p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+ 
+  .layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+  }
+ 
+  .filters-sidebar {
+    width: 230px;
+    min-width: 230px;
+    position: sticky;
+    top: 14px;
+    margin-top: -6px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+ 
+  .filter-group {
+    position: relative;
+  }
+ 
+  /* The swipe/scroll button only makes sense on the narrow, horizontally
+     scrolling layout — hidden on desktop where every option is visible. */
+  .swipe-hint {
+    display: none;
+  }
+ 
+  .filter-group h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 10px;
+  }
+ 
+  .role-filter-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+ 
+  .role-pill {
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 10px;
+    background: #e2eefc;
+    color: #1d4fa0;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+ 
+  .role-pill svg { flex: none; opacity: 0.8; }
+ 
+  .role-pill:hover { background: #d0e3fa; transform: translateX(2px); }
+ 
+  .role-pill.active {
+    background: #1e3a8a;
+    color: #ffffff;
+  }
+ 
+  .filter-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+ 
+  .pill {
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 10px;
+    background: #e2f5e9;
+    color: #1c7a4f;
+    text-align: left;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+ 
+  .pill:hover { background: #d0eedc; transform: translateX(2px); }
+ 
+  .pill.active {
+    background: #14532d;
+    color: #ffffff;
+  }
+ 
+  .main-content { flex: 1; min-width: 0; }
+ 
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; }
+    .filters-sidebar { width: 100%; min-width: 0; position: static; }
+    .filter-block { flex-direction: row; flex-wrap: wrap; max-height: none; overflow: visible; }
+    .role-filter-block { flex-direction: row; flex-wrap: wrap; }
+  }
+ 
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+ 
+  .project-card {
+    display: flex;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-rest);
+    transform: translateY(-2px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.2s ease;
+  }
+ 
+  .project-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(0,0,0,0.12);
+  }
+ 
+  .project-card.hidden { display: none; }
+ 
+  .project-image {
+    width: 400px;
+    min-width: 400px;
+    min-height: 270px;
+    margin: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--project-image-border);
+    box-shadow: inset 0 0 0 1px var(--project-image-inset);
+    overflow: hidden;
+  }
+ 
+  .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+ 
+  .project-content {
+    flex: 1;
+    min-width: 320px;
+    padding: 24px 30px;
+  }
+ 
+  .badge-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+ 
+  .badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+ 
+  .badge.fmcg      { background: #fbe7e0; color: #7a3418; }
+  .badge.ecommerce { background: #e2eefb; color: #14487c; }
+  .badge.hygiene   { background: #fbe6ef; color: #772245; }
+  .badge.babycare  { background: #ece9fd; color: #322a72; }
+ 
+  .project-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--text-primary);
+  }
+ 
+  .project-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin: 0 0 14px;
+  }
+ 
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+ 
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    padding: 5px 13px;
+    border-radius: 999px;
+    background: var(--tag-bg);
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+ 
+  .tag svg { flex: none; opacity: 0.7; }
+ 
+  .btn-row { display: flex; gap: 10px; }
+ 
+  .btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: var(--btn-bg);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+ 
+  .btn:hover { filter: brightness(0.96); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+ 
+  .btn.primary {
+    background: #eef0ff;
+    color: #4338ca;
+    border-color: #d9d4fb;
+  }
+  .btn.primary:hover { background: #e0e4fd; box-shadow: 0 4px 10px rgba(67,56,202,0.18); }
+ 
+  .btn.success {
+    background: #fdf0e0;
+    color: #a15b0a;
+    border-color: #f5ddb8;
+  }
+  .btn.success:hover { background: #fbe6cc; box-shadow: 0 4px 10px rgba(161,91,10,0.18); }
+ 
+  @media (max-width: 900px) {
+    .project-image { width: 260px; min-width: 260px; min-height: 220px; }
+  }
+ 
+  @media (max-width: 700px) {
+    .page { padding: 18px 14px 40px; }
+ 
+    .site-header { padding: 12px 16px; }
+    .site-header .brand-left { gap: 10px; }
+    .avatar-circle { width: 44px; height: 44px; }
+    .site-header .brand-name { font-size: 16px; }
+    .site-header .brand-title { font-size: 10px; }
+ 
+    .nav-toggle { display: flex; }
+ 
+    .site-header nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.14);
+      padding: 6px 16px 10px;
+      z-index: 19;
+    }
+ 
+    .site-header nav.nav-open { display: flex; }
+ 
+    .site-header nav a {
+      font-size: 14px;
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--header-border);
+    }
+ 
+    .site-header nav a:last-child { border-bottom: none; }
+ 
+    .hero { margin-bottom: 16px; }
+    .hero h1 { font-size: 21px; margin-bottom: 6px; }
+    .hero p { font-size: 13px; line-height: 1.45; }
+ 
+    .layout { gap: 14px; }
+ 
+    .filters-sidebar { gap: 12px; }
+    .filter-group h3 { font-size: 11px; margin-bottom: 6px; }
+ 
+    .filter-group::after {
+      content: "";
+      position: absolute;
+      top: 24px;
+      right: 0;
+      bottom: 6px;
+      width: 28px;
+      background: linear-gradient(to right, var(--fade-edge), var(--fade-edge-solid));
+      pointer-events: none;
+    }
+ 
+    /* Small button that nudges the user to swipe the filter row, and can be
+       clicked to scroll it. It disappears once the row is fully scrolled. */
+    .swipe-hint {
+      position: absolute;
+      top: 16px;
+      right: 2px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--purple);
+      cursor: pointer;
+      padding: 0;
+      opacity: 0;
+      z-index: 2;
+      transition: opacity 0.35s ease, transform 0.15s ease;
+    }
+ 
+    .swipe-hint svg { width: 13px; height: 13px; }
+    .swipe-hint:hover { transform: scale(1.08); }
+ 
+    .filter-group.scrollable .swipe-hint {
+      opacity: 1;
+      animation: swipe-nudge 1.6s ease-in-out 3;
+    }
+ 
+    .filter-group.scrollable.interacted .swipe-hint {
+      animation: none;
+    }
+ 
+    .filter-group.scrollable.at-end .swipe-hint {
+      opacity: 0;
+      pointer-events: none;
+      animation: none;
+    }
+ 
+    @keyframes swipe-nudge {
+      0%, 100% { transform: translateX(0); opacity: 1; }
+      50% { transform: translateX(4px); opacity: 0.65; }
+    }
+ 
+    .role-filter-block, .filter-block {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      max-height: none;
+      gap: 6px;
+      padding: 2px 2px 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      cursor: grab;
+    }
+    .role-filter-block::-webkit-scrollbar, .filter-block::-webkit-scrollbar { display: none; }
+    .role-filter-block.dragging, .filter-block.dragging { cursor: grabbing; scroll-behavior: auto; }
+ 
+    .role-pill, .pill {
+      flex: none;
+      white-space: nowrap;
+      font-size: 12px;
+      padding: 7px 13px;
+    }
+ 
+    .project-list { gap: 14px; }
+ 
+    .project-card { flex-direction: column; border-radius: 14px; }
+    .project-image { width: auto; min-width: 0; min-height: 150px; margin: 10px 10px 0; border-radius: 10px; }
+    .project-image svg { width: 40px; height: 40px; }
+ 
+    .project-content { min-width: 0; padding: 14px 16px 16px; }
+    .project-title { font-size: 15px; }
+    .project-desc { font-size: 12.5px; margin-bottom: 10px; }
+ 
+    .badge-row, .tag-row { gap: 5px; margin-bottom: 8px; }
+    .badge { font-size: 10.5px; padding: 3px 9px; }
+    .tag { font-size: 11px; padding: 4px 10px; }
+ 
+    .btn-row { gap: 6px; flex-wrap: wrap; }
+    .btn { font-size: 12px; padding: 7px 13px; }
+  }
+  /* Subtle floating sparkles drifting across the whole page for a lively feel */
+  .sparkle-field {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+ 
+  .sparkle {
+    position: absolute;
+    bottom: -12px;
+    border-radius: 50%;
+    background: var(--purple);
+    opacity: 0;
+    animation: sparkle-float linear infinite;
+    will-change: transform, opacity;
+  }
+ 
+  @keyframes sparkle-float {
+    0%   { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; }
+    8%   { opacity: 0.55; }
+    50%  { transform: translateY(-55vh) translateX(var(--drift, 12px)) scale(1); opacity: 0.35; }
+    92%  { opacity: 0.12; }
+    100% { transform: translateY(-110vh) translateX(calc(var(--drift, 12px) * 2)) scale(0.8); opacity: 0; }
+  }
+ 
+  @media (prefers-reduced-motion: reduce) {
+    .sparkle-field { display: none; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="sparkle-field" id="sparkle-field" aria-hidden="true"></div>
+ 
+<div class="site-header">
+  <div class="brand-left">
+    <div class="avatar-circle">
+      <img src="images/ChatGPT Image Apr 22, 2026, 02_42_22 PM.png" alt="Priyanka De">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b3fd6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0 -4.4 3.6 -7 8 -7s8 2.6 8 7"></path></svg>
+    </div>
+    <div>
+      <p class="brand-name">Priyanka De</p>
+      <p class="brand-title">Data Analyst &bull; Data Scientist &bull; ML Engineer &bull; Power BI Developer</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <nav id="site-nav">
+      <a href="index.html">Home</a>
+      <a href="1234.html" class="active">Projects</a>
+      <a href="about.html">About</a>
+      <a href="contact.htm">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"></path></svg>
+    </button>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+    </button>
+  </div>
+</div>
+ 
+<div class="page">
+ 
+  <div class="hero">
+    <h1>My portfolio projects</h1>
+    <p>Browse through my projects showcasing expertise in data analysis, machine learning, and visualization solutions for real-world problems across various sectors.</p>
+  </div>
+ 
+  <div class="layout">
+ 
+    <aside class="filters-sidebar">
+      <div class="filter-group" id="role-filter-group">
+        <h3>Role</h3>
+        <button type="button" class="swipe-hint" id="role-swipe-btn" aria-label="Scroll to see more roles">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </button>
+        <div class="role-filter-block" id="role-filters">
+          <button class="role-pill active" data-role="all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle></svg>
+            All roles
+          </button>
+          <button class="role-pill" data-role="analyst">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 16v-4"></path><path d="M12 16v-8"></path><path d="M16 16v-6"></path></svg>
+            Data analyst
+          </button>
+          <button class="role-pill" data-role="scientist">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"></circle><circle cx="12" cy="18" r="2"></circle><circle cx="19" cy="9" r="2"></circle><path d="M5 8v2a2 2 0 0 0 2 2h10"></path><path d="M12 16v-4"></path></svg>
+            Data scientist
+          </button>
+          <button class="role-pill" data-role="ml,mlops">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2l4 -4"></path><circle cx="12" cy="12" r="9"></circle></svg>
+            ML &amp; MLOps
+          </button>
+          <button class="role-pill" data-role="dl">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"></circle><circle cx="5" cy="18" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="6" r="2"></circle><circle cx="19" cy="18" r="2"></circle><path d="M7 7l3.5 3.5"></path><path d="M7 17l3.5 -3.5"></path><path d="M13.5 10.5l3.5 -3.5"></path><path d="M13.5 13.5l3.5 3.5"></path></svg>
+            Deep learning
+          </button>
+        </div>
+      </div>
+ 
+      <div class="filter-group" id="domain-filter-group">
+        <h3>Domain</h3>
+        <button type="button" class="swipe-hint" id="domain-swipe-btn" aria-label="Scroll to see more domains">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </button>
+        <div class="filter-block" id="domain-filters">
+          <button class="pill active" data-domain="all">All</button>
+          <button class="pill" data-domain="fmcg">FMCG &amp; E-commerce</button>
+          <button class="pill" data-domain="real-estate">Real estate</button>
+          <button class="pill" data-domain="healthcare">Healthcare</button>
+          <button class="pill" data-domain="travel">Travel and hospitality</button>
+          <button class="pill" data-domain="media">Media and entertainment</button>
+          <button class="pill" data-domain="telecom">Telecom</button>
+          <button class="pill" data-domain="bfsi">BFSI</button>
+          <button class="pill" data-domain="edtech">EdTech</button>
+          <button class="pill" data-domain="fashion">Fashion</button>
+          <button class="pill" data-domain="automobile">Automobile</button>
+        </div>
+      </div>
+    </aside>
+ 
+    <div class="main-content">
+      <div class="project-list" id="project-list">
+ 
+    <div class="project-card" data-domain="fmcg" data-role="analyst">
+      <div class="project-image">
+        <img src="images/fmcg1.png" alt="FMCG market and product performance with sales optimization analysis">
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge fmcg">FMCG</span>
+          <span class="badge ecommerce">E-commerce</span>
+          <span class="badge hygiene">Womencare and hygiene</span>
+        </div>
+        <p class="project-title">FMCG market and product performance with sales optimization analysis</p>
+        <p class="project-desc">Built a scalable SQL schema and semantic layer with core entities like customers, transactions, and category performance.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <a href="#" class="btn primary">Details</a>
+          <a href="#" class="btn success">Presentation</a>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fmcg" data-role="analyst">
+      <div class="project-image" style="background:#e2eefb;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#1a5a9c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"></circle><circle cx="17" cy="19" r="2"></circle><path d="M17 17h-11v-14h-2"></path><path d="M6 5l14 1l-1 7h-13"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge fmcg">FMCG</span>
+          <span class="badge babycare">Baby care</span>
+        </div>
+        <p class="project-title">Baby care product trend analysis</p>
+        <p class="project-desc">Designed a dashboard tracking sales, supply chain, and marketing performance with visualization tools.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <a href="#" class="btn primary">Details</a>
+          <a href="#" class="btn success">Presentation</a>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fmcg" data-role="scientist">
+      <div class="project-image" style="background:#e3f4ec;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#12704f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17h10"></path><rect x="1" y="6" width="15" height="10" rx="2"></rect><path d="M16 9h3l3 3v4h-2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="18" cy="17" r="2"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge fmcg">FMCG</span>
+        </div>
+        <p class="project-title">Region-wise product supply chain analysis</p>
+        <p class="project-desc">Built a Power BI dashboard analyzing regional supply chain performance, demand forecast, and inventory efficiency.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>DAX</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Data modeling</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <a href="#" class="btn primary">Details</a>
+          <a href="#" class="btn success">Presentation</a>
+        </div>
+      </div>
+    </div>
+ 
+    </div>
+ 
+  </div>
+ 
+  </div>
+</div>
+ 
+<script>
+  // Ambient sparkles drifting slowly up the page — purely decorative
+  (function () {
+    var field = document.getElementById('sparkle-field');
+    if (!field || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+ 
+    var count = window.innerWidth < 700 ? 14 : 24;
+    for (var i = 0; i < count; i++) {
+      var s = document.createElement('span');
+      s.className = 'sparkle';
+      var size = (Math.random() * 2.5 + 1.5).toFixed(1);
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = (Math.random() * 100).toFixed(1) + 'vw';
+      s.style.setProperty('--drift', (Math.random() * 40 - 20).toFixed(0) + 'px');
+      var duration = (Math.random() * 18 + 16).toFixed(1);
+      s.style.animationDuration = duration + 's';
+      s.style.animationDelay = (Math.random() * -duration).toFixed(1) + 's';
+      field.appendChild(s);
+    }
+  })();
+ 
+  // Mobile hamburger menu — opens/closes the dropdown nav on narrow screens
+  (function () {
+    var navToggle = document.getElementById('nav-toggle');
+    var siteNav = document.getElementById('site-nav');
+    if (!navToggle || !siteNav) return;
+ 
+    function closeNav() {
+      siteNav.classList.remove('nav-open');
+      navToggle.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+ 
+    navToggle.addEventListener('click', function () {
+      var isOpen = siteNav.classList.toggle('nav-open');
+      navToggle.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+ 
+    siteNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeNav);
+    });
+ 
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 700) closeNav();
+    });
+  })();
+ 
+  // Dark / light mode toggle, remembers the user's choice
+  (function () {
+    var toggle = document.getElementById('theme-toggle');
+    var stored = null;
+    try { stored = localStorage.getItem('portfolio-theme'); } catch (e) {}
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'dark' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+    toggle.addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      try { localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light'); } catch (e) {}
+    });
+  })();
+ 
+  // Show a small button on the filter rows when there's more to scroll.
+  // Clicking it scrolls the row; it disappears once the row is fully scrolled.
+  (function () {
+    var groups = [
+      { group: document.getElementById('role-filter-group'), row: document.getElementById('role-filters'), btn: document.getElementById('role-swipe-btn') },
+      { group: document.getElementById('domain-filter-group'), row: document.getElementById('domain-filters'), btn: document.getElementById('domain-swipe-btn') }
+    ];
+ 
+    function checkEnd(g) {
+      if (!g.row || !g.group) return;
+      var atEnd = g.row.scrollLeft + g.row.clientWidth >= g.row.scrollWidth - 2;
+      g.group.classList.toggle('at-end', atEnd);
+    }
+ 
+    function refresh() {
+      groups.forEach(function (g) {
+        if (!g.group || !g.row) return;
+        var isScrollable = g.row.scrollWidth > g.row.clientWidth + 2;
+        g.group.classList.toggle('scrollable', isScrollable);
+        checkEnd(g);
+      });
+    }
+ 
+    groups.forEach(function (g) {
+      if (!g.row || !g.group) return;
+      g.row.addEventListener('scroll', function () {
+        g.group.classList.add('interacted');
+        checkEnd(g);
+      }, { passive: true });
+ 
+      if (g.btn) {
+        g.btn.addEventListener('click', function () {
+          g.group.classList.add('interacted');
+          g.row.scrollBy({ left: Math.round(g.row.clientWidth * 0.6), behavior: 'smooth' });
+        });
+      }
+    });
+ 
+    refresh();
+    window.addEventListener('resize', refresh);
+  })();
+ 
+  var roleButtons = document.querySelectorAll('#role-filters .role-pill');
+  var domainButtons = document.querySelectorAll('#domain-filters .pill');
+  var cards = document.querySelectorAll('.project-card');
+  var currentRole = 'all';
+  var currentDomain = 'all';
+ 
+  function applyFilters() {
+    var currentRoles = currentRole.split(',');
+    cards.forEach(function (card) {
+      var roleMatch = currentRoles.indexOf('all') !== -1 || currentRoles.indexOf(card.getAttribute('data-role')) !== -1;
+      var domainMatch = currentDomain === 'all' || card.getAttribute('data-domain') === currentDomain;
+      card.classList.toggle('hidden', !(roleMatch && domainMatch));
+    });
+  }
+ 
+  roleButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      roleButtons.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentRole = btn.getAttribute('data-role');
+      applyFilters();
+    });
+  });
+ 
+  domainButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      domainButtons.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentDomain = btn.getAttribute('data-domain');
+      applyFilters();
+    });
+  });
+ 
+  // Click-and-drag horizontal scrolling for the filter chip rows
+  // (touch swipe already works natively on phones)
+  [document.getElementById('role-filters'), document.getElementById('domain-filters')].forEach(function (el) {
+    var isDown = false, startX, scrollLeft, moved = false;
+ 
+    el.addEventListener('mousedown', function (e) {
+      isDown = true;
+      moved = false;
+      el.classList.add('dragging');
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    });
+    el.addEventListener('mouseleave', function () { isDown = false; el.classList.remove('dragging'); });
+    el.addEventListener('mouseup', function () { isDown = false; el.classList.remove('dragging'); });
+    el.addEventListener('mousemove', function (e) {
+      if (!isDown) return;
+      e.preventDefault();
+      var x = e.pageX - el.offsetLeft;
+      var walk = x - startX;
+      if (Math.abs(walk) > 5) moved = true;
+      el.scrollLeft = scrollLeft - walk;
+    });
+    // Prevent a drag from also triggering a pill click
+    el.addEventListener('click', function (e) {
+      if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+    }, true);
+  });
+</script>
+ 
+</body>
+</html>
+ 
