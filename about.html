@@ -1,169 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <title>Priyanka De-Portfolio | Full Stack Data Scientist</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priyanka De-info</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<style>
+  :root {
+    --page-bg: #eef0f6;
+    --header-bg: #ffffff;
+    --header-border: #e8e6df;
+    --card-bg: #ffffff;
+    --card-border: #e8e6df;
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --shadow-rest: 0 10px 24px rgba(0,0,0,0.10), 0 3px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    --purple: #5b3fd6;
+    --tag-bg: #f1efe8;
+    --btn-bg: #ffffff;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  body.dark-mode {
+    --page-bg: #14151c;
+    --header-bg: #1b1c25;
+    --header-border: #2b2d3a;
+    --card-bg: #1f2029;
+    --card-border: #30323f;
+    --text-primary: #f0efec;
+    --text-secondary: #a7a6b3;
+    --shadow-rest: 0 10px 24px rgba(0,0,0,0.35), 0 3px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
+    --purple: #9c8bff;
+    --tag-bg: #2a2c38;
+    --btn-bg: #262733;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--page-bg);
+    margin: 0;
+    transition: background 0.2s ease;
+  }
+
+  /* ===== Header (identical to projects page) ===== */
+  .site-header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--header-border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+    z-index: 20;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 20px; }
+
+  .theme-toggle {
+    width: 34px; height: 34px; min-width: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--header-border);
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+    transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  }
+  .theme-toggle:hover { transform: scale(1.08); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+  .theme-toggle .icon-moon { display: none; }
+  body.dark-mode .theme-toggle .icon-sun { display: none; }
+  body.dark-mode .theme-toggle .icon-moon { display: block; }
+
+  .nav-toggle {
+    display: none;
+    width: 34px; height: 34px; min-width: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--header-border);
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+  }
+  .nav-toggle svg { width: 18px; height: 18px; }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle.open .icon-menu { display: none; }
+  .nav-toggle.open .icon-close { display: block; }
+
+  .site-header .brand-left { display: flex; align-items: center; gap: 14px; }
+
+  .avatar-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: none;
+    background: #ece9fd;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #d9d4fb;
+  }
+  .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+  .site-header .brand-name { font-size: 20px; font-weight: 700; color: var(--purple); margin: 0; }
+  .site-header .brand-title { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; }
+
+  .site-header nav { display: flex; gap: 28px; }
+  .site-header nav a {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    text-decoration: none; padding: 6px 4px;
+    border-bottom: 2px solid transparent; cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .site-header nav a:hover { color: var(--purple); border-bottom-color: #d9d4fb; }
+  .site-header nav a.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  @media (max-width: 700px) {
+    .site-header { padding: 12px 16px; }
+    .site-header .brand-left { gap: 10px; }
+    .avatar-circle { width: 44px; height: 44px; }
+    .site-header .brand-name { font-size: 16px; }
+    .site-header .brand-title { font-size: 10px; }
+    .nav-toggle { display: flex; }
+    .site-header nav {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; gap: 0;
+      background: var(--header-bg); border-bottom: 1px solid var(--header-border);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.14); padding: 6px 16px 10px; z-index: 19;
+    }
+    .site-header nav.nav-open { display: flex; }
+    .site-header nav a { font-size: 14px; padding: 12px 4px; border-bottom: 1px solid var(--header-border); }
+    .site-header nav a:last-child { border-bottom: none; }
+  }
+
+  /* ===== Page layout ===== */
+  .page { max-width: 1150px; margin: 0 auto; padding: 48px 20px 60px; }
+
+  .layout { display: flex; align-items: flex-start; gap: 40px; }
+
+  /* Left skills column */
+  .skills-sidebar {
+    width: 220px;
+    min-width: 220px;
+    position: sticky;
+    top: 24px;
+  }
+  .skills-sidebar h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 14px;
+  }
+  .skills-sidebar .skill-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .skills-sidebar .skill-tag {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 14px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f2f2f0;
+    color: #3a3a38;
+    border: 1px solid #e2e2de;
+  }
+  .skills-sidebar .skill-tag::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    border-radius: 50%;
+    background: var(--purple);
+  }
+
+  body.dark-mode .skills-sidebar .skill-tag {
+    background: #33343f;
+    color: #ececec;
+    border-color: #40414d;
+  }
+
+  @media (max-width: 820px) {
+    .layout { flex-direction: column; }
+    .skills-sidebar { width: 100%; min-width: 0; position: static; }
+    .skills-sidebar .skill-tags { flex-direction: row; flex-wrap: wrap; }
+    .skills-sidebar .skill-tag { flex: none; }
+  }
+
+  .main-content { flex: 1; min-width: 0; }
+
+  .intro { margin-bottom: 28px; }
+
+  .intro-text h1 {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--text-primary);
+    margin: 0 0 14px;
+  }
+  .intro-text h1 em { font-style: normal; color: var(--purple); }
+
+  .journey p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    margin: 0 0 14px;
+    max-width: 64ch;
+  }
+
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 22px 0 40px; }
+  .cta-btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .cta-btn.primary {
+    background: var(--purple);
+    color: #ffffff;
+  }
+  .cta-btn.primary:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(91,63,214,0.28); }
+  .cta-btn.secondary {
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+  }
+  .cta-btn.secondary:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+
+  .section-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 22px;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 7px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--card-border);
+  }
+  .timeline-item { position: relative; padding: 0 0 30px 34px; }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 3px solid var(--purple);
+  }
+  .timeline-item .when { font-size: 12px; font-weight: 700; color: var(--purple); margin: 0 0 4px; }
+  .timeline-item h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 6px; }
+  .timeline-bullet { list-style: none; margin: 0; padding: 0; }
+  .timeline-bullet li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .timeline-bullet li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    min-width: 5px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+  }
+
+  @media (max-width: 700px) {
+    .page { padding: 32px 16px 40px; }
+    .intro-text h1 { font-size: 22px; }
+  }
+</style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
-  <!-- Navbar -->
-  <nav>
-    <div class="nav-container">
-     <div class="logos">
-        <h2 class="names">
-          <!-- Priyanka De <span class="dash">–</span>  -->
-            <span class="portfolio">Priyanka De</span>
-        </h2>
-        <p class="roles">
-          <b>Data Analyst • Business Analyst • Power BI Developer</b>
-        </p>
+
+<div class="site-header">
+  <div class="brand-left">
+    <div class="avatar-circle">
+      <img src="images/ChatGPT Image Apr 22, 2026, 02_42_22 PM.png" alt="Priyanka De">
+    </div>
+    <div>
+      <p class="brand-name">Priyanka De</p>
+      <p class="brand-title">Data Analyst &bull; Data Scientist &bull; ML Engineer &bull; Power BI Developer</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <nav id="site-nav">
+      <a href="index.html">Home</a>
+      <a href="1234.html">Projects</a>
+      <a href="about.html" class="active">About</a>
+      <a href="contacts.html">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"></path></svg>
+    </button>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+    </button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="layout">
+
+    <aside class="skills-sidebar">
+      <h3>Data Analyst</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Excel</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">SQL</span>
+        <span class="skill-tag">Power BI</span>
+        <span class="skill-tag">Statistics</span>
+        <span class="skill-tag">Storytelling</span>
       </div>
-      <div class="menu-toggle" id="menu-toggle">☰</div>
-  
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="resume.html">Resume</a></li>
-        <li><a href="about.html">About</a></li>
-        <!-- <li><b>Blog</b></li> -->
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-  </nav>
-<!-- <!-- ABOUT SECTION -->
-<section class="about-section">
+      <h3 style="margin-top: 26px;">Data Science &amp; ML</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Machine learning</span>
+        <span class="skill-tag">Deep learning</span>
+        <span class="skill-tag">MLOps</span>
+        <span class="skill-tag">Git</span>
+        <span class="skill-tag">Cloud</span>
+      </div>
+    </aside>
 
-  <h2 class="section-title">
-    About <span>Me</span>
-  </h2>
+    <div class="main-content">
 
-  <div class="about-container">
-
-    <!-- LEFT IMAGE -->
-    <div class="about-img">
-      <!-- <img src="images/ChatGPT Image Apr 22, 2026, 02_42_22 PM.png"> -->
-    </div>
-
-    <!-- RIGHT CONTENT -->
-    <div class="about-text">
-
-      <h3>Who I Am</h3>
-
-      <p>
-        I’m a Full Stack Data Analyst passionate about transforming raw data into meaningful business insights.
-        I specialize in Business Intelligence, Statistical Analysis, and Dashboard Storytelling.
-      </p>
-
-      <p>
-        My journey started with curiosity about how data drives decisions.
-        Today, I build real-world analytics solutions that help businesses grow, optimize operations, and make smarter decisions.
-      </p>
-
-      <p>
-        I focus on combining analytics, machine learning, and visualization to deliver high-impact business solutions.
-      </p>
-
-      <a href="#" class="btn primary">Download CV</a>
-
-      <!-- MINI GRID -->
-      <div class="about-extra">
-
-        <div>
-          <h4>Education</h4>
-          <p>MSc (AI & ML)</p>
-          <p>BSc Mathematics</p>
+      <div class="intro">
+        <div class="intro-text">
+          <h1>From a physics degree to <em>finding patterns in data.</em></h1>
         </div>
+      </div>
 
-        <div>
-          <h4>Certifications</h4>
-          <p>Full Stack Data Scientist</p>
-          <p>Data Visualization</p>
+      <div class="journey">
+        <p>I'm Priyanka De, a data analyst and aspiring data scientist with a BSc in Physics Honors. Physics trained me to break complex systems into testable questions, and that habit now shapes how I work with data &mdash; forming a hypothesis, checking it against evidence, and building something reliable from what I find.</p>
+        <p>Since graduating, I've moved deliberately into data work: building SQL and Python foundations, applying them during a hands-on data analytics apprenticeship, and now going deeper into machine learning and data science through structured coursework. Along the way I've picked up Power BI, statistics, and storytelling as the tools that turn analysis into something people can actually act on.</p>
+      </div>
+
+      <div class="cta-row">
+        <a href="#" class="cta-btn primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 21h14"></path></svg>
+          Download my CV
+        </a>
+        <a href="1234.html" class="cta-btn secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+          View my work
+        </a>
+      </div>
+
+      <p class="section-heading">Education &amp; experience</p>
+      <div class="timeline">
+        <div class="timeline-item">
+          <p class="when">Education</p>
+          <h3>BSc Physics Honors</h3>
+          <ul class="timeline-bullet"><li>Physics</li></ul>
         </div>
-
+        <div class="timeline-item">
+          <p class="when">Apprenticeship</p>
+          <h3>Grow Data Skills</h3>
+          <ul class="timeline-bullet"><li>Data analysis</li></ul>
+        </div>
+        <div class="timeline-item">
+          <p class="when">3-month internship</p>
+          <h3>Unified Mentor</h3>
+          <ul class="timeline-bullet"><li>Data analysis</li></ul>
+        </div>
+        <div class="timeline-item">
+          <p class="when">Certification</p>
+          <h3>DataSpace Academy</h3>
+          <ul class="timeline-bullet"><li>Data science</li></ul>
+        </div>
       </div>
 
     </div>
-
   </div>
-</section>
-   
+</div>
 
-
-
-
-<!-- footer -->
-<footer class="footer">
-
-  <div class="footer-container">
-
-    <!-- LEFT -->
-    <div class="footer-col">
-      <h2 class="logo">DataFolio</h2>
-      <p>
-        Showcasing data expertise and projects in analytics,
-        data science, and machine learning.
-      </p>
+<footer class="site-footer">
+  <div class="footer-card">
+    <h2>Let's build something with data</h2>
+    <p>Open to data scientist and ML engineer roles — always happy to talk through a project or a dashboard.</p>
+    <div class="footer-buttons">
+      <a href="mailto:your-email@example.com" class="btn-primary">Email me</a>
+      <a href="https://linkedin.com/in/your-profile" class="btn-outline" target="_blank">Connect on LinkedIn</a>
     </div>
-
-    <!-- MIDDLE (TWO-COLUMN QUICK LINKS) -->
-    <div class="footer-col">
-      <h3>Quick Links</h3>
-
-      <div class="quick-grid">
-        <!-- Column 1 -->
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="resume.html">Resume</a></li>
-          <li><a href="projects.html">Projects</a></li>
-        </ul>
-
-        <!-- Column 2 -->
-        <ul>
-          <li><a href="about.html">About</a></li>
-          <li><a href="contact.html">Contact</a></li>
-
-          <!-- EMAIL (opens Gmail in browser) -->
-          <li>
-            <a href="https://mail.google.com/mail/?view=cm&to=pdecloud98@gmail.com,dataexplorepriyanka@gmail.com&su=Portfolio%20Inquiry&body=Hi%20Priyanka,"
-               target="_blank">
-              Email
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="footer-col">
-      <h3>Connect With Me</h3>
-
-      <div class="footer-socials">
-        <a href="https://github.com/data98priyanka" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="https://www.linkedin.com/in/priyanka-de-711555289/" target="_blank"><i class="fab fa-linkedin"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-
-        <!-- Gmail (browser compose) -->
-      <a href="mailto:pdecloud98@gmail.com,dataexplorepriyanka@gmail.com"><i class="fas fa-envelope"></i></a>
-
-        <!-- Phone -->
-        <a href="tel:+917063257272"><i class="fas fa-phone"></i></a>
-
-        <a href="https://www.instagram.com/pdecloud98/" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="priyankade._51838" target="_blank"><i class="fab fa-discord"></i></a>
-      </div>
-    </div>
-
   </div>
-
-  <div class="footer-bottom">
-    <p>© 2026 DataFolio. All rights reserved.</p>
-  </div>
-
+  <p class="footer-copy">&copy; 2026 Priyanka De. Built with Python, Power BI, and a lot of coffee.</p>
 </footer>
-<script src="js/script.js"></script>
+
+<style>
+.site-footer { background-color: #ececea; padding: 48px 0; }
+.footer-card { background: #2c2c2a; border-radius: 16px; padding: 40px 32px; text-align: center; margin: 0 24px; }
+.footer-card h2 { color: #f5f4f1; font-size: 22px; font-weight: 600; margin: 0 0 12px; }
+.footer-card p { color: #b4b2a9; font-size: 14px; line-height: 1.5; margin: 0 0 24px; }
+.footer-buttons { display: flex; gap: 12px; justify-content: center; }
+.btn-primary { background: #f5f4f1; color: #2c2c2a; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 24px; text-decoration: none; }
+.btn-outline { background: transparent; color: #f5f4f1; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 24px; text-decoration: none; border: 1px solid #5f5e5a; }
+.footer-copy { text-align: center; color: #888780; font-size: 12px; margin: 28px 0 0; }
+</style>
+
+<script>
+  (function () {
+    var navToggle = document.getElementById('nav-toggle');
+    var siteNav = document.getElementById('site-nav');
+    if (!navToggle || !siteNav) return;
+    function closeNav() {
+      siteNav.classList.remove('nav-open');
+      navToggle.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+    navToggle.addEventListener('click', function () {
+      var isOpen = siteNav.classList.toggle('nav-open');
+      navToggle.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    siteNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeNav);
+    });
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 700) closeNav();
+    });
+  })();
+
+  (function () {
+    var toggle = document.getElementById('theme-toggle');
+    var stored = null;
+    try { stored = localStorage.getItem('portfolio-theme'); } catch (e) {}
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'dark' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+    toggle.addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      try { localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light'); } catch (e) {}
+    });
+  })();
+</script>
 
 </body>
 </html>
