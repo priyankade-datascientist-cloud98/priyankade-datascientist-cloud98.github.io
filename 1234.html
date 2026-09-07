@@ -1003,6 +1003,40 @@
     });
   });
  
+  // Read ?role= and ?domain= from the URL (e.g. links from the home page's
+  // Featured Projects buttons) and pre-select the matching filters on load.
+  (function initFiltersFromURL() {
+    var params = new URLSearchParams(window.location.search);
+    var domainParam = params.get('domain');
+    var roleParam = params.get('role');
+
+    if (roleParam) {
+      var matchedRoleBtn = null;
+      roleButtons.forEach(function (b) {
+        if (b.getAttribute('data-role') === roleParam) matchedRoleBtn = b;
+      });
+      if (matchedRoleBtn) {
+        roleButtons.forEach(function (b) { b.classList.remove('active'); });
+        matchedRoleBtn.classList.add('active');
+        currentRole = roleParam;
+      }
+    }
+
+    if (domainParam) {
+      var matchedDomainBtn = null;
+      domainButtons.forEach(function (b) {
+        if (b.getAttribute('data-domain') === domainParam) matchedDomainBtn = b;
+      });
+      if (matchedDomainBtn) {
+        domainButtons.forEach(function (b) { b.classList.remove('active'); });
+        matchedDomainBtn.classList.add('active');
+        currentDomain = domainParam;
+      }
+    }
+
+    applyFilters();
+  })();
+ 
   // Click-and-drag horizontal scrolling for the filter chip rows
   // (touch swipe already works natively on phones)
   [document.getElementById('role-filters'), document.getElementById('domain-filters')].forEach(function (el) {
@@ -1062,4 +1096,3 @@
 
   
 </html>
- 
