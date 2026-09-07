@@ -1,1 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Priyanka De | Data Scientist </title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<style>
+  :root {
+    --page-bg: #eef0f6;
+    --header-bg: #ffffff;
+    --header-border: #e8e6df;
+    --card-bg: #ffffff;
+    --card-border: #e8e6df;
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --shadow-rest: 0 10px 24px rgba(0,0,0,0.10), 0 3px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    --shadow-hover: 0 24px 44px rgba(0,0,0,0.18), 0 8px 16px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.6);
+    --purple: #5b3fd6;
+    --tag-bg: #f1efe8;
+    --btn-bg: #ffffff;
+    --fade-edge-solid: #eef0f6;
+    --project-image-border: rgba(0,0,0,0.09);
+    --project-image-inset: rgba(255,255,255,0.4);
+    transition: background 0.2s ease, color 0.2s ease;
+  }
 
+  body.dark-mode {
+    --page-bg: #14151c;
+    --header-bg: #1b1c25;
+    --header-border: #2b2d3a;
+    --card-bg: #1f2029;
+    --card-border: #30323f;
+    --text-primary: #f0efec;
+    --text-secondary: #a7a6b3;
+    --shadow-rest: 0 10px 24px rgba(0,0,0,0.35), 0 3px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
+    --shadow-hover: 0 24px 44px rgba(0,0,0,0.5), 0 8px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
+    --purple: #9c8bff;
+    --tag-bg: #2a2c38;
+    --btn-bg: #262733;
+    --fade-edge-solid: #14151c;
+    --project-image-border: rgba(255,255,255,0.08);
+    --project-image-inset: rgba(255,255,255,0.05);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--page-bg);
+    margin: 0;
+    transition: background 0.2s ease;
+  }
+
+  /* ---------- Header (shared with projects page) ---------- */
+  .site-header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--header-border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 20px; }
+
+  .theme-toggle {
+    width: 34px; height: 34px; min-width: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--header-border);
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+    transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  }
+  .theme-toggle:hover { transform: scale(1.08); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+  .theme-toggle .icon-moon { display: none; }
+  body.dark-mode .theme-toggle .icon-sun { display: none; }
+  body.dark-mode .theme-toggle .icon-moon { display: block; }
+
+  .nav-toggle {
+    display: none;
+    width: 34px; height: 34px; min-width: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--header-border);
+    background: var(--btn-bg);
+    color: var(--text-primary);
+    align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+  }
+  .nav-toggle svg { width: 18px; height: 18px; }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle.open .icon-menu { display: none; }
+  .nav-toggle.open .icon-close { display: block; }
+
+  .site-header .brand-left { display: flex; align-items: center; gap: 14px; }
+
+  .avatar-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: none;
+    background: #ece9fd;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #d9d4fb;
+  }
+  .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+  .site-header .brand-name { font-size: 20px; font-weight: 700; color: var(--purple); margin: 0; }
+  .site-header .brand-title { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; }
+
+  .site-header nav { display: flex; gap: 28px; }
+  .site-header nav a {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    text-decoration: none; padding: 6px 4px;
+    border-bottom: 2px solid transparent; cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .site-header nav a:hover { color: var(--purple); border-bottom-color: #d9d4fb; }
+  .site-header nav a.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  @media (max-width: 700px) {
+    .site-header { padding: 12px 16px; }
+    .site-header .brand-left { gap: 10px; }
+    .avatar-circle { width: 44px; height: 44px; }
+    .site-header .brand-name { font-size: 16px; }
+    .site-header .brand-title { font-size: 10px; }
+    .nav-toggle { display: flex; }
+    .site-header nav {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; gap: 0;
+      background: var(--header-bg); border-bottom: 1px solid var(--header-border);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.14);
+      padding: 6px 16px 10px; z-index: 19;
+    }
+    .site-header nav.nav-open { display: flex; }
+    .site-header nav a { font-size: 14px; padding: 12px 4px; border-bottom: 1px solid var(--header-border); }
+    .site-header nav a:last-child { border-bottom: none; }
+  }
+
+  .page { max-width: 1300px; margin: 0 auto; padding: 0 20px 80px; position: relative; z-index: 2; }
+
+  /* ---------- Hero ---------- */
+  .hero-section {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 92px;
+    padding: 64px 0 56px;
+  }
+
+  .hero-copy { max-width: 800px; }
+
+  .hero-eyebrow {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--purple);
+    margin: 0 0 6px;
+  }
+
+  .hero-copy h1 {
+    font-size: 46px;
+    line-height: 1.12;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 14px;
+  }
+
+  .hero-copy h1 span { color: var(--purple); }
+
+  .hero-role {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 18px;
+  }
+
+  .hero-copy p.hero-desc {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    max-width: 780px;
+  }
+
+  .core-focus { margin: 4px 0 26px; }
+  .core-focus-label { font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0 0 10px; }
+  .core-focus-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .core-focus-tags .tag {
+    background: #ffffff; border: 1px solid var(--card-border); box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    color: var(--text-secondary); border-radius: 999px; padding: 7px 15px; font-size: 13px; font-weight: 600;
+  }
+  .core-focus-tags .tag::before { content: "•"; margin-right: 6px; color: var(--purple); font-weight: 700; }
+
+  .hero-stats {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 0 0 28px;
+  }
+  .hero-stat {
+    flex: 1 1 150px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: none;
+  }
+  .hero-stat .num { display: block; font-size: 16px; font-weight: 700; color: var(--purple); margin-bottom: 2px; }
+  .hero-stat .label { display: block; font-size: 12px; color: var(--text-secondary); }
+
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 26px; }
+
+  .btn {
+    font-size: 14px; font-weight: 600; padding: 12px 24px;
+    border-radius: 999px; border: 1px solid var(--card-border);
+    background: var(--btn-bg); cursor: pointer; text-decoration: none;
+    color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+
+  .btn.primary { background: var(--purple); color: #ffffff; border-color: var(--purple); }
+  .btn.primary:hover { filter: brightness(1.06); box-shadow: 0 8px 18px rgba(91,63,214,0.28); }
+
+  .btn.ghost { background: var(--btn-bg); color: var(--text-primary); }
+
+  .hero-socials { display: flex; gap: 10px; }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 12px;
+    border: 1px solid var(--card-border); background: var(--btn-bg);
+    color: var(--text-primary); display: flex; align-items: center; justify-content: center;
+    text-decoration: none; transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .icon-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
+  .icon-btn svg { width: 18px; height: 18px; }
+  .icon-btn.github    { background: #14151c; border-color: #14151c; color: #ffffff; }
+  .icon-btn.linkedin  { background: #0a66c2; border-color: #0a66c2; color: #ffffff; }
+  .icon-btn.whatsapp  { background: #25d366; border-color: #25d366; color: #ffffff; }
+  .icon-btn.github:hover, .icon-btn.linkedin:hover, .icon-btn.whatsapp:hover { filter: brightness(1.08); }
+  .icon-btn.email { background: #ffffff; border-color: var(--card-border); color: #ea4335; }
+  .icon-btn.email:hover { border-color: #ea4335; filter: brightness(1.04); }
+  .icon-btn.phone { color: var(--text-primary); }
+  .icon-btn.phone:hover { color: var(--purple); border-color: var(--purple); }
+
+  .hero-photo-wrap { flex: none; position: relative; width: 260px; height: 260px; }
+  .hero-photo-accent {
+    position: absolute; top: 18px; left: 18px; right: -18px; bottom: -18px;
+    background: linear-gradient(145deg, #d9d4fb, #b9aef8);
+    z-index: 0;
+  }
+  .hero-photo {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    border: 3px solid var(--card-bg);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-rest);
+    overflow: hidden;
+  }
+  .hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  @media (max-width: 860px) {
+    .hero-section { flex-direction: column; text-align: center; padding: 40px 0 36px; gap: 24px; }
+    .hero-copy { max-width: 100%; }
+    .hero-copy p.hero-desc { margin-left: auto; margin-right: auto; }
+    .hero-actions, .hero-socials { justify-content: center; }
+    .core-focus-tags, .hero-stats { justify-content: center; }
+    .hero-copy h1 { font-size: 32px; }
+    .hero-photo-wrap { width: 180px; height: 180px; margin: 0 auto 8px; }
+    .hero-photo-accent { top: 12px; left: 12px; right: -12px; bottom: -12px; }
+  }
+
+  /* ---------- Section shell ---------- */
+  .section { padding: 56px 0; scroll-margin-top: 90px; }
+  .section-head { text-align: center; margin-bottom: 36px; }
+  .section-head h2 {
+    font-size: 28px; font-weight: 700; color: var(--purple); margin: 0 0 10px;
+  }
+  .section-head p {
+    font-size: 15px; color: var(--text-secondary); margin: 0;
+    max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.6;
+  }
+
+  /* ---------- Featured projects — round icon-badge domain buttons ---------- */
+  .preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 34px 30px;
+  }
+
+  .domain-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    width: 108px;
+  }
+
+  .domain-circle {
+    width: 92px; height: 92px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-rest);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  .domain-circle svg { width: 40px; height: 40px; }
+  .domain-circle img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+  .domain-btn:hover .domain-circle { transform: translateY(-6px) scale(1.05); box-shadow: var(--shadow-hover); }
+
+  .domain-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .see-all-wrap { text-align: center; margin-top: 40px; }
+
+  @media (max-width: 640px) {
+    .section-head h2 { font-size: 22px; }
+    .domain-btn { width: 84px; }
+    .domain-circle { width: 74px; height: 74px; }
+    .domain-circle svg { width: 30px; height: 30px; }
+  }
+
+
+  /* ---------- Focus areas — single-line row of pill buttons ---------- */
+  .focus-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .focus-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-rest);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .focus-pill:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+  .focus-pill .focus-icon {
+    width: 26px; height: 26px; border-radius: 50%; flex: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .focus-pill .focus-icon svg { width: 14px; height: 14px; }
+
+  @media (max-width: 700px) {
+    .focus-row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* ---------- Tech stack ---------- */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .stack-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow-rest);
+  }
+
+  .stack-card h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0 0 14px; text-align: center; }
+
+  .stack-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .stack-pill { font-size: 12.5px; font-weight: 600; padding: 6px 13px; border-radius: 999px; }
+
+  .stack-pill.lang     { background: #e2eefc; color: #1d4fa0; }
+  .stack-pill.clean    { background: #ece9fd; color: #4a3ba0; }
+  .stack-pill.viz      { background: #e2f5e9; color: #1c7a4f; }
+  .stack-pill.scrape   { background: #fdf0e0; color: #a15b0a; }
+  .stack-pill.cloud    { background: #e2f5e9; color: #147a4a; }
+  .stack-pill.ml       { background: #fbe6ef; color: #9c2d5e; }
+
+  @media (max-width: 980px) { .stack-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .stack-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- Closing CTA / footer — black & white combination ---------- */
+  .cta-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 44px 40px;
+    box-shadow: var(--shadow-rest);
+    text-align: center;
+  }
+  .cta-card h2 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin: 0 0 10px; }
+  .cta-card p { font-size: 14.5px; color: var(--text-secondary); margin: 0 0 24px; }
+  .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  .dark-footer {
+    background: #0d0e13;
+    color: #f4f4f6;
+    padding: 72px 20px 0;
+    position: relative; z-index: 2;
+  }
+  .dark-footer-inner { max-width: 1300px; margin: 0 auto; text-align: center; }
+  .dark-footer h2 { font-size: 28px; font-weight: 700; color: #ffffff; margin: 0 0 12px; }
+  .dark-footer p { font-size: 15px; color: #b5b6bf; margin: 0 0 28px; max-width: 460px; margin-left: auto; margin-right: auto; }
+
+  .btn-dark-primary, .btn-dark-ghost {
+    font-size: 14px; font-weight: 600; padding: 12px 24px;
+    border-radius: 999px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .btn-dark-primary { background: #ffffff; color: #0d0e13; border: 1px solid #ffffff; }
+  .btn-dark-primary:hover { background: var(--purple); border-color: var(--purple); color: #ffffff; transform: translateY(-1px); }
+  .btn-dark-ghost { background: transparent; color: #ffffff; border: 1px solid #3a3c46; }
+  .btn-dark-ghost:hover { border-color: #ffffff; transform: translateY(-1px); }
+
+  .dark-footer-bottom {
+    margin-top: 56px;
+    padding: 22px 0;
+    border-top: 1px solid #24262f;
+    font-size: 12.5px;
+    color: #7c7e8a;
+  }
+
+  .site-footer {
+    text-align: center;
+    padding: 28px 20px 40px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    position: relative; z-index: 2;
+  }
+
+  .sparkle-field { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .sparkle {
+    position: absolute; bottom: -12px; border-radius: 50%;
+    background: var(--purple); opacity: 0;
+    animation: sparkle-float linear infinite; will-change: transform, opacity;
+  }
+  @keyframes sparkle-float {
+    0%   { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; }
+    8%   { opacity: 0.55; }
+    50%  { transform: translateY(-55vh) translateX(var(--drift, 12px)) scale(1); opacity: 0.35; }
+    92%  { opacity: 0.12; }
+    100% { transform: translateY(-110vh) translateX(calc(var(--drift, 12px) * 2)) scale(0.8); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sparkle-field { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="sparkle-field" id="sparkle-field" aria-hidden="true"></div>
+
+<div class="site-header">
+  <div class="brand-left">
+    <div class="avatar-circle">
+      <img src="images/logo.png" alt="Priyanka De">
+    </div>
+    <div>
+      <p class="brand-name">Priyanka De</p>
+      <p class="brand-title">Turning data into decisions</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <nav id="site-nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="1234.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="contacts.html">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"></path></svg>
+    </button>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+    </button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ---------- Hero ---------- -->
+  <div class="hero-section">
+    <div class="hero-photo-wrap">
+      <div class="hero-photo-accent"></div>
+      <div class="hero-photo">
+        <img src="images/ChatGPT Image Apr 22, 2026, 02_42_22 PM.png" alt="Priyanka De">
+        <!-- <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#ece9fd"><circle cx="12" cy="8.5" r="4"></circle><path d="M4 21c0 -4.4 3.6 -7 8 -7s8 2.6 8 7z"></path></svg> -->
+      </div>
+    </div>
+
+    <div class="hero-copy">
+      <p class="hero-eyebrow">Hello, I'm</p>
+      <h1>Priyanka <span>De</span></h1>
+      <p class="hero-role">Data Analyst | Data Scientist | ML &amp; MLOps | Deep Learning</p>
+      <p class="hero-desc">I am a data science professional who turns raw data into actionable insights, predictive models, and production-ready solutions. With 15+ end-to-end projects across diverse domains, I work across the complete data-to-deployment lifecycle — from data preparation, EDA, statistical analysis, and feature engineering to machine learning, deep learning, pipelines, cloud, and deployment.</p>
+      <p class="hero-desc">I combine analytical thinking with business-focused problem solving, using Power BI and data storytelling to transform complex data into clear, decision-ready insights. My hands-on work also includes ML/MLOps workflows, cloud technologies, deployment, and Git-based version control, with a focus on building scalable, reproducible, and practical data solutions.</p>
+
+      <div class="core-focus">
+        <p class="core-focus-label">Core Focus</p>
+        <div class="core-focus-tags">
+          <span class="tag">Data Analytics</span>
+          <span class="tag">EDA</span>
+          <span class="tag">Power BI</span>
+          <span class="tag">Data Science</span>
+          <span class="tag">Machine Learning</span>
+          <span class="tag">Deep Learning</span>
+          <span class="tag">ML &amp; MLOps</span>
+          <span class="tag">Data/ML Pipelines</span>
+          <span class="tag">Cloud</span>
+          <span class="tag">Deployment</span>
+          <span class="tag">Git</span>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="num">15+</span><span class="label">end-to-end projects</span></div>
+        <div class="hero-stat"><span class="num">AWS / Azure</span><span class="label">cloud deployment</span></div>
+        <div class="hero-stat"><span class="num">Kolkata, WB</span><span class="label">based in</span></div>
+      </div>
+      <div class="hero-actions">
+        <a href="#projects" class="btn primary">View my work</a>
+        <a href="#" class="btn ghost">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
+          Download CV
+        </a>
+      </div>
+      <div class="hero-socials">
+        <a href="#" class="icon-btn github" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.19c0 4.49 2.87 8.3 6.84 9.65.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.36-3.37-1.36-.45-1.19-1.11-1.51-1.11-1.51-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.19C22 6.58 17.52 2 12 2z"></path></svg></a>
+        <a href="#" class="icon-btn linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM3.2 8.5h3.5V21H3.2V8.5zM9.5 8.5h3.36v1.71h.05c.47-.88 1.6-1.8 3.3-1.8 3.53 0 4.18 2.32 4.18 5.35V21h-3.5v-6.5c0-1.55-.03-3.55-2.17-3.55-2.17 0-2.5 1.7-2.5 3.44V21H9.5V8.5z"></path></svg></a>
+        <a href="https://wa.me/917063257272" target="_blank" rel="noopener" class="icon-btn whatsapp" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.41-1.36a9.86 9.86 0 0 0 4.63 1.15h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.85 9.85 0 0 0 12.04 2zm0 1.67c2.19 0 4.24.85 5.79 2.4a8.15 8.15 0 0 1 2.4 5.8c0 4.53-3.68 8.21-8.2 8.21a8.2 8.2 0 0 1-4.17-1.14l-.3-.17-3.02.76.8-2.94-.19-.31a8.17 8.17 0 0 1-1.26-4.37c0-4.53 3.69-8.24 8.15-8.24zm-4.42 4.4c-.16 0-.42.06-.64.31-.22.24-.85.83-.85 2.03 0 1.2.87 2.35.99 2.52.12.16 1.7 2.7 4.2 3.72 2.08.84 2.5.68 2.95.63.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.13-1.45-.71-1.68-.8-.22-.08-.39-.12-.55.13-.16.24-.63.79-.78.96-.14.16-.28.18-.53.06-.24-.12-1.02-.38-1.95-1.2-.72-.64-1.21-1.44-1.35-1.68-.14-.24-.01-.37.11-.49.11-.12.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.36-.77-1.85-.19-.46-.4-.42-.55-.43z"></path></svg></a>
+        <a href="mailto:dataexplorer.junior@gmail.com" class="icon-btn email" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6l9 -6"></path></svg></a>
+        <a href="tel:+917063257272" class="icon-btn phone" aria-label="Call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Featured projects ---------- -->
+  <div class="section" id="projects">
+    <div class="section-head">
+      <h2>Featured Projects</h2>
+      <p>15+ end-to-end projects across the sectors top MNCs recruit for most. Pick a domain to see the work.</p>
+    </div>
+
+    <div class="preview-grid">
+
+      <!-- FMCG & E-commerce — bold cart silhouette -->
+      <a href="projects.html?domain=fmcg" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#ff9d6c,#f2703c);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/ecom.png" alt="fmcg"> 
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M2.5 3.2a1 1 0 0 1 1 -1h1.7a1 1 0 0 1 1 .8l.4 1.9h14.1a1 1 0 0 1 1 1.25l-1.7 6.6a1.6 1.6 0 0 1 -1.55 1.2H8.4a1.6 1.6 0 0 1 -1.55 -1.25L4.9 4.4l-.3 -1.4H3.5a1 1 0 0 1 -1 -1z"></path><circle cx="9" cy="19.3" r="1.6"></circle><circle cx="17" cy="19.3" r="1.6"></circle></svg>
+        </div>
+        <span class="domain-label">FMCG &amp;<br>E-commerce</span>
+      </a>
+
+      <!-- Healthcare — bold heart with cross -->
+      <a href="projects.html?domain=healthcare" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#6fd4a0,#2fa871);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/health.png" alt="healthcare">
+          <svg viewBox="0 0 24 24" fill-rule="evenodd" clip-rule="evenodd" fill="#fff"><path d="M12 21.2 L3.4 12.6a5.6 5.6 0 0 1 7.9 -7.9l.7 .7l.7 -.7a5.6 5.6 0 0 1 7.9 7.9z"></path><path d="M11 8h2v3h3v2h-3v3h-2v-3H8v-2h3z" fill="#2fa871"></path></svg>
+        </div>
+        <span class="domain-label">Healthcare</span>
+      </a>
+
+      <!-- EdTech — bold graduation cap -->
+      <a href="projects.html?domain=edtech" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#8f9bff,#4a55d1);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/ed.png" alt="edtech"> 
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3.2 L23 8.6 L12 14 L1 8.6z"></path><path d="M5.5 10.6v4.6c0 1.7 3 3.4 6.5 3.4s6.5 -1.7 6.5 -3.4v-4.6l-6.5 3.2z"></path><rect x="21.3" y="8.6" width="1.4" height="6.4" rx="0.7"></rect></svg>
+        </div>
+        <span class="domain-label">EdTech</span>
+      </a>
+
+      <!-- Telecom — bold signal tower -->
+      <a href="projects.html?domain=telecom" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#7fb8f5,#2f6fd1);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/tele.png" alt="telecom"> 
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6v2.6"></path><path d="M7.8 6.4l1.8 2.2"></path><path d="M16.2 6.4l-1.8 2.2"></path><circle cx="12" cy="10" r="2.3" fill="#fff" stroke="none"></circle><path d="M4.5 21.4c0 -6.2 3.4 -10.4 7.5 -10.4s7.5 4.2 7.5 10.4"></path></svg>
+        </div>
+        <span class="domain-label">Telecom</span>
+      </a>
+
+      <!-- Automobile — bold car silhouette -->
+      <a href="projects.html?domain=automobile" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#8fa7c7,#4c6a99);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/car.png" alt="automobile"> 
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M4.2 17.2H2.5v-4.9c0 -.7 .4 -1.3 1 -1.6l1.7 -4.2a2 2 0 0 1 1.9 -1.3h9.8a2 2 0 0 1 1.9 1.3l1.7 4.2c.6 .3 1 .9 1 1.6v4.9h-1.7"></path><path d="M7.4 6.7L6 10.6h12l-1.4 -3.9z" fill="#4c6a99"></path><circle cx="7.2" cy="17.2" r="2.1"></circle><circle cx="16.8" cy="17.2" r="2.1"></circle><rect x="9" y="16.2" width="6" height="1.6"></rect></svg>
+        </div>
+        <span class="domain-label">Automobile</span>
+      </a>
+
+      <!-- Travel & Hospitality — bold tour bus -->
+      <a href="projects.html?domain=travel" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#ff8a8a,#e2453f);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/tour.png" alt="travel"> 
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M4 8.5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5h-1.6v-7.5a.4 .4 0 0 0 -.4 -.4H6a.4 .4 0 0 0 -.4 .4v7.5H4z"></path><rect x="4" y="10.2" width="16" height="5.8" rx="1"></rect><rect x="6" y="7.2" width="4.2" height="2.6" rx="0.5" fill="#e2453f"></rect><rect x="11" y="7.2" width="4.2" height="2.6" rx="0.5" fill="#e2453f"></rect><circle cx="7.6" cy="17.4" r="1.8"></circle><circle cx="16.4" cy="17.4" r="1.8"></circle></svg>
+        </div>
+        <span class="domain-label">Travel &amp;<br>Hospitality</span>
+      </a>
+
+      <!-- Real Estate — bold house silhouette -->
+      <a href="projects.html?domain=realestate" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#d4a373,#a9713b);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/real.png" alt="realestate">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8 L21.5 11h-2.2v9.2h-4.6v-6.4H9.3v6.4H4.7V11H2.5z"></path><rect x="15.4" y="4.4" width="1.8" height="3.4" fill="#fff"></rect><rect x="10.6" y="13.4" width="2.8" height="2.8" fill="#a9713b"></rect></svg>
+        </div>
+        <span class="domain-label">Real Estate</span>
+      </a>
+
+      <!-- Media & Entertainment — bold play/clapper -->
+      <a href="projects.html?domain=media" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#b984ee,#8a3fd1);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/media.png" alt="media">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M3 9.4l1 -3.4h2.6l-1 3.4z"></path><path d="M7.4 9.4l1 -3.4h2.6l-1 3.4z"></path><path d="M11.8 9.4l1 -3.4h2.6l-1 3.4z"></path><path d="M16.2 9.4l1 -3.4H21l-1 3.4z"></path><rect x="3" y="9.4" width="18" height="9.8" rx="1"></rect><path d="M10 12.4l5 2.4l-5 2.4z" fill="#8a3fd1"></path></svg>
+        </div>
+        <span class="domain-label">Media &amp;<br>Entertainment</span>
+      </a>
+
+      <!-- BFSI — bold bank silhouette -->
+      <a href="projects.html?domain=bfsi" class="domain-btn">
+        <div class="domain-circle" style="background:linear-gradient(135deg,#f3c04c,#d99b12);">
+          <!-- <!-- To use your own photo/logo, replace the <svg>...</svg> below with: -->
+             <img src="images/bfsi.png" alt="bfsi">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5 L22 8h-20z"></path><rect x="2" y="19.5" width="20" height="2"></rect><rect x="4.5" y="10" width="2.4" height="8"></rect><rect x="10.8" y="10" width="2.4" height="8"></rect><rect x="17.1" y="10" width="2.4" height="8"></rect></svg>
+        </div>
+        <span class="domain-label">BFSI</span>
+      </a>
+
+    </div>
+
+    <div class="see-all-wrap">
+      <a href="projects.html" class="btn ghost">See all projects</a>
+    </div>
+  </div>
+
+  <!-- ---------- Tech stack ---------- -->
+  <div class="section" id="stack">
+    <div class="section-head">
+      <h2>My Tech Stack</h2>
+      <p>Tools and technologies I use across data analytics, ML, and visualization.</p>
+    </div>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <h3>Programming Languages</h3>
+        <div class="stack-pills">
+          <span class="stack-pill lang">Python</span>
+          <span class="stack-pill lang">SQL</span>
+          <span class="stack-pill lang">MS SQL Server</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <h3>Data Cleaning &amp; Manipulation</h3>
+        <div class="stack-pills">
+          <span class="stack-pill clean">NumPy</span>
+          <span class="stack-pill clean">Pandas</span>
+          <span class="stack-pill clean">SciPy</span>
+          <span class="stack-pill clean">Advanced Excel</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <h3>Data Modeling &amp; Visualization</h3>
+        <div class="stack-pills">
+          <span class="stack-pill viz">Power BI</span>
+          <span class="stack-pill viz">Tableau</span>
+          <span class="stack-pill viz">Matplotlib</span>
+          <span class="stack-pill viz">Seaborn</span>
+          <span class="stack-pill viz">Plotly</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <h3>Web Scraping &amp; Connectors</h3>
+        <div class="stack-pills">
+          <span class="stack-pill scrape">Requests</span>
+          <span class="stack-pill scrape">BeautifulSoup</span>
+          <span class="stack-pill scrape">Selenium</span>
+          <span class="stack-pill scrape">SQLAlchemy</span>
+          <span class="stack-pill scrape">OpenPyXL</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <h3>Cloud &amp; OS</h3>
+        <div class="stack-pills">
+          <span class="stack-pill cloud">Azure</span>
+          <span class="stack-pill cloud">Microsoft Fabric</span>
+          <span class="stack-pill cloud">AWS</span>
+          <span class="stack-pill cloud">Databricks</span>
+          <span class="stack-pill cloud">Git</span>
+          <span class="stack-pill cloud">GitHub</span>
+          <span class="stack-pill cloud">Linux</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <h3>Data Science &amp; ML</h3>
+        <div class="stack-pills">
+          <span class="stack-pill ml">Scikit-learn</span>
+          <span class="stack-pill ml">PySpark</span>
+          <span class="stack-pill ml">PyTorch</span>
+          <span class="stack-pill ml">TensorFlow</span>
+          <span class="stack-pill ml">Keras</span>
+          <span class="stack-pill ml">Hugging Face</span>
+          <span class="stack-pill ml">MLflow</span>
+          <span class="stack-pill ml">LangChain</span>
+          <span class="stack-pill ml">LangGraph</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Focus areas — single-line row of pill buttons ---------- -->
+  <div class="section" id="focus">
+    <div class="section-head">
+      <h2>Focus Areas</h2>
+      <p>Key domains I specialize in and actively explore.</p>
+    </div>
+
+    <div class="focus-row">
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#dfeafc;"><svg viewBox="0 0 24 24" fill="none" stroke="#2952c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9"></path><path d="M10 19V5"></path><path d="M16 19v-7"></path><path d="M4 19h16"></path></svg></span>
+        Dashboarding
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#fdedc8;"><svg viewBox="0 0 24 24" fill="none" stroke="#b4790a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a6 6 0 0 0 -4 10.5c.6 .5 1 1.3 1 2.1v.4h6v-.4c0 -.8 .4 -1.6 1 -2.1a6 6 0 0 0 -4 -10.5z"></path></svg></span>
+        Storytelling
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#e6e4fb;"><svg viewBox="0 0 24 24" fill="none" stroke="#4a3ba0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 7h8"></path><path d="M8 11h.01"></path><path d="M12 11h.01"></path><path d="M16 11h.01"></path><path d="M8 15h.01"></path><path d="M12 15h.01"></path><path d="M16 15h.01"></path></svg></span>
+        Statistics
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#d9f3e3;"><svg viewBox="0 0 24 24" fill="none" stroke="#1c7a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3a5.5 5.5 0 0 0 -3.5 9.8a5.5 5.5 0 0 0 3.5 9.8"></path><path d="M14.5 3a5.5 5.5 0 0 1 3.5 9.8a5.5 5.5 0 0 1 -3.5 9.8"></path></svg></span>
+        ML
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#fbe1ea;"><svg viewBox="0 0 24 24" fill="none" stroke="#9c2d5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3"></path><path d="M12 19v3"></path><path d="M4.2 4.2l2.1 2.1"></path><path d="M17.7 17.7l2.1 2.1"></path><path d="M2 12h3"></path><path d="M19 12h3"></path><path d="M4.2 19.8l2.1-2.1"></path><path d="M17.7 6.3l2.1-2.1"></path></svg></span>
+        MLOps
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#eae7fb;"><svg viewBox="0 0 24 24" fill="none" stroke="#4a3ba0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"></circle><circle cx="5" cy="18" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="6" r="2"></circle><circle cx="19" cy="18" r="2"></circle><path d="M7 7l3.5 3.5"></path><path d="M7 17l3.5 -3.5"></path><path d="M13.5 10.5l3.5 -3.5"></path><path d="M13.5 13.5l3.5 3.5"></path></svg></span>
+        Deep Learning
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#d4f5f2;"><svg viewBox="0 0 24 24" fill="none" stroke="#0e7c74" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-9l-4 4v-4h-1a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3"></path></svg></span>
+        NLP
+      </span>
+      <span class="focus-pill">
+        <span class="focus-icon" style="background:#fbe0de;"><svg viewBox="0 0 24 24" fill="none" stroke="#a12b21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="12" rx="2"></rect><path d="M9 3v4"></path><path d="M15 3v4"></path><circle cx="9.5" cy="13" r="1"></circle><circle cx="14.5" cy="13" r="1"></circle><path d="M9 17h6"></path></svg></span>
+        LLM
+      </span>
+    </div>
+  </div>
+
+  <!-- ---------- Closing CTA ---------- -->
+  </div>
+
+  <footer class="dark-footer" id="contact">
+    <div class="dark-footer-inner">
+      <h2>Let's build something with data</h2>
+      <p>Open to data scientist and ML engineer roles — always happy to talk through a project or a dashboard.</p>
+      <div class="cta-actions">
+        <a href="mailto:dataexplorer.junior@gmail.com" class="btn-dark-primary">Email me</a>
+        <a href="#" class="btn-dark-ghost">Connect on LinkedIn</a>
+      </div>
+      <div class="dark-footer-bottom">
+        <span>&copy; 2026 Priyanka De. Built with Python, Power BI, and a lot of coffee.</span>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  (function () {
+    var field = document.getElementById('sparkle-field');
+    if (!field || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+
+    var count = window.innerWidth < 700 ? 14 : 24;
+    for (var i = 0; i < count; i++) {
+      var s = document.createElement('span');
+      s.className = 'sparkle';
+      var size = (Math.random() * 2.5 + 1.5).toFixed(1);
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = (Math.random() * 100).toFixed(1) + 'vw';
+      s.style.setProperty('--drift', (Math.random() * 40 - 20).toFixed(0) + 'px');
+      var duration = (Math.random() * 18 + 16).toFixed(1);
+      s.style.animationDuration = duration + 's';
+      s.style.animationDelay = (Math.random() * -duration).toFixed(1) + 's';
+      field.appendChild(s);
+    }
+  })();
+
+  (function () {
+    var navToggle = document.getElementById('nav-toggle');
+    var siteNav = document.getElementById('site-nav');
+    if (!navToggle || !siteNav) return;
+
+    function closeNav() {
+      siteNav.classList.remove('nav-open');
+      navToggle.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    navToggle.addEventListener('click', function () {
+      var isOpen = siteNav.classList.toggle('nav-open');
+      navToggle.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    siteNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeNav);
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 700) closeNav();
+    });
+  })();
+
+  (function () {
+    var toggle = document.getElementById('theme-toggle');
+    var stored = null;
+    try { stored = localStorage.getItem('portfolio-theme'); } catch (e) {}
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'dark' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+    toggle.addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      try { localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light'); } catch (e) {}
+    });
+  })();
+</script>
+
+</body>
+</html>
