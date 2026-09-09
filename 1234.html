@@ -372,6 +372,24 @@
   .badge.ecommerce { background: #e2eefb; color: #14487c; }
   .badge.hygiene   { background: #fbe6ef; color: #772245; }
   .badge.babycare  { background: #ece9fd; color: #322a72; }
+
+  /* Domain badges — one distinct tint per domain, echoing the homepage icon colors */
+  .badge.domain-fmcg        { background: #fde7dc; color: #b1490f; }
+  .badge.domain-healthcare  { background: #dff5e8; color: #1f7a4f; }
+  .badge.domain-edtech      { background: #e6e8fd; color: #3c3fa0; }
+  .badge.domain-telecom     { background: #e0eefc; color: #1d5fa0; }
+  .badge.domain-automobile  { background: #e6ebf2; color: #445872; }
+  .badge.domain-travel      { background: #fde3e2; color: #b23a33; }
+  .badge.domain-real-estate { background: #f3e6d8; color: #8a5a26; }
+  .badge.domain-media       { background: #f2e6fc; color: #7a35b0; }
+  .badge.domain-bfsi        { background: #fbf0d6; color: #a17d0a; }
+  .badge.domain-fashion     { background: #fce3ee; color: #b23a70; }
+
+  /* Role badges — one distinct tint per role */
+  .badge.role-analyst  { background: #e2eefc; color: #1d4fa0; }
+  .badge.role-scientist{ background: #e2f5e9; color: #1c7a4f; }
+  .badge.role-mlops    { background: #ece9fd; color: #4a3ba0; }
+  .badge.role-dl       { background: #fbe6ef; color: #9c2d5e; }
  
   .project-title {
     font-size: 18px;
@@ -440,6 +458,14 @@
     border-color: #f5ddb8;
   }
   .btn.success:hover { background: #fbe6cc; box-shadow: 0 4px 10px rgba(161,91,10,0.18); }
+
+  .btn.github {
+    background: #14151c;
+    color: #ffffff;
+    border-color: #14151c;
+  }
+  .btn.github:hover { filter: brightness(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.28); }
+  body.dark-mode .btn.github { background: #050507; border-color: #050507; }
  
   @media (max-width: 900px) {
     .project-image { width: 260px; min-width: 260px; min-height: 220px; }
@@ -679,7 +705,228 @@
   margin: 28px 0 0;
 }
 
-  
+/* ---------- Project preview pop-up (centered, swipeable) ---------- */
+.preview-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 12, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 90;
+}
+.preview-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.preview-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: min(920px, 94vw);
+  height: min(760px, 90vh);
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.35), 0 10px 24px rgba(0,0,0,0.18);
+  transform: translate(-50%, -50%) scale(0.94);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(.32,.72,0,1), opacity 0.24s ease;
+  z-index: 91;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.preview-panel.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.preview-panel.dragging { transition: none; }
+
+.preview-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 0;
+  flex: none;
+  cursor: grab;
+  touch-action: none;
+}
+.preview-drag-handle span {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--card-border);
+}
+
+.preview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px 16px;
+  border-bottom: 1px solid var(--card-border);
+  flex: none;
+}
+
+.preview-header-text { min-width: 0; }
+
+.preview-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin: 0 0 4px;
+}
+
+.preview-counter {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--tag-bg);
+  border-radius: 999px;
+  padding: 2px 9px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.preview-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.preview-close {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: var(--btn-bg);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.preview-close:hover { transform: scale(1.06); }
+.preview-close svg { width: 16px; height: 16px; }
+
+.preview-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--page-bg);
+}
+
+.preview-frame-holder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.preview-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.preview-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  gap: 10px;
+}
+
+.preview-empty-state svg {
+  width: 40px;
+  height: 40px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.preview-empty-state p {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.55;
+}
+
+.preview-empty-state code {
+  font-size: 12px;
+  background: var(--tag-bg);
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--text-primary);
+}
+
+/* Edge-swipe zones sit above the iframe so a tap/drag near the sides always
+   reaches our navigation logic instead of being swallowed by the embedded
+   PDF/PPT viewer (which runs in its own document and can't be swiped through). */
+.preview-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 15%;
+  min-width: 40px;
+  max-width: 90px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: pan-y;
+  background: linear-gradient(to right, rgba(0,0,0,0.05), rgba(0,0,0,0));
+}
+.preview-edge.next {
+  right: 0;
+  justify-content: flex-end;
+  background: linear-gradient(to left, rgba(0,0,0,0.05), rgba(0,0,0,0));
+}
+.preview-edge.prev { left: 0; justify-content: flex-start; }
+
+.preview-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  cursor: pointer;
+  margin: 0 8px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.preview-nav-btn:hover { transform: scale(1.08); }
+.preview-nav-btn:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+.preview-nav-btn svg { width: 18px; height: 18px; }
+
+@media (max-width: 700px) {
+  .preview-panel {
+    width: 96vw;
+    height: 88vh;
+    border-radius: 18px;
+  }
+  .preview-edge { width: 13%; }
+  .preview-nav-btn { width: 34px; height: 34px; margin: 0 6px; }
+}
+
 </style>
 </head>
 
@@ -692,8 +939,7 @@
 <div class="site-header">
   <div class="brand-left">
     <div class="avatar-circle">
-      <img src="images/ChatGPT Image Apr 22, 2026, 02_42_22 PM.png" alt="Priyanka De">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b3fd6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0 -4.4 3.6 -7 8 -7s8 2.6 8 7"></path></svg>
+      <img src="images/logo.png" alt="Priyanka De">
     </div>
     <div>
       <p class="brand-name">Priyanka De</p>
@@ -705,7 +951,6 @@
       <a href="index.html">Home</a>
       <a href="1234.html" class="active">Projects</a>
       <a href="about.html">About</a>
-      <!-- <a href="contact.html">Contact</a> -->
       <a href="contacts.html">Contact</a>
     </nav>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark / light mode">
@@ -723,9 +968,8 @@
  
   <div class="hero">
     <h1>My portfolio projects</h1>
-    <!-- <p>Browse through my projects showcasing expertise in data analysis, machine learning, and visualization solutions for real-world problems across various sectors.15+ end-to-end projects demonstrating EDA, analytical thinking, Power BI storytelling, machine learning, deep learning, data/ML pipelines, cloud technologies, deployment, and Git-based workflows.</p> -->
    <p style="width: 1200px; max-width: 95%; margin: 0 auto; text-align: center;">
-    Browse through my <strong>15+ end-to-end projects</strong> demonstrating EDA, analytical thinking, storytelling, ML/mlOPs, deep learning, data pipelines,<br> cloud deployment, and Git-based workflows for real-world problems across various sectors.
+    Browse through my <strong>15+ end-to-end projects</strong> demonstrating EDA, analytical thinking, storytelling, ML/MLOps, deep learning, data pipelines,<br> cloud deployment, and Git-based workflows for real-world problems across various sectors.
   </p>
   </div>
  
@@ -784,77 +1028,927 @@
  
     <div class="main-content">
       <div class="project-list" id="project-list">
- 
     <div class="project-card" data-domain="fmcg" data-role="analyst">
-      <div class="project-image">
-        <img src="images/fmcg1.png" alt="FMCG market and product performance with sales optimization analysis">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff9d6c,#f2703c);">
+                <img src="images/fmcg1.png" alt="FMCG market and product performance with sales optimization analysis">
+        <!-- <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 3.2a1 1 0 0 1 1 -1h1.7a1 1 0 0 1 1 .8l.4 1.9h14.1a1 1 0 0 1 1 1.25l-1.7 6.6a1.6 1.6 0 0 1 -1.55 1.2H8.4a1.6 1.6 0 0 1 -1.55 -1.25L4.9 4.4l-.3 -1.4H3.5a1 1 0 0 1 -1 -1z"></path><circle cx="9" cy="19.3" r="1.6"></circle><circle cx="17" cy="19.3" r="1.6"></circle></svg> -->
       </div>
       <div class="project-content">
         <div class="badge-row">
-          <span class="badge fmcg">FMCG</span>
-          <span class="badge ecommerce">E-commerce</span>
-          <span class="badge hygiene">Womencare and hygiene</span>
+          <span class="badge domain-fmcg">FMCG & E-commerce</span>
+          <span class="badge role-analyst">Data Analyst</span>
         </div>
-        <p class="project-title">FMCG market and product performance with sales optimization analysis</p>
-        <p class="project-desc">Built a scalable SQL schema and semantic layer with core entities like customers, transactions, and category performance.</p>
+        <p class="project-title">FMCG sales & category performance dashboard</p>
+        <p class="project-desc">Built a Power BI dashboard tracking product sales, category mix, and regional performance from a cleaned SQL data model.</p>
         <div class="tag-row">
           <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
           <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
-          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
-        </div>
-        <div class="btn-row">
-          <a href="#" class="btn primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
-          <!-- <a href="#" class="btn primary">Details</a> -->
-          <a href="#" class="btn success">Project Preview</a>
-        </div>
-      </div>
-    </div>
- 
-    <div class="project-card" data-domain="fmcg" data-role="analyst">
-      <div class="project-image" style="background:#e2eefb;">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#1a5a9c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"></circle><circle cx="17" cy="19" r="2"></circle><path d="M17 17h-11v-14h-2"></path><path d="M6 5l14 1l-1 7h-13"></path></svg>
-      </div>
-      <div class="project-content">
-        <div class="badge-row">
-          <span class="badge fmcg">FMCG</span>
-          <span class="badge babycare">Baby care</span>
-        </div>
-        <p class="project-title">Baby care product trend analysis</p>
-        <p class="project-desc">Designed a dashboard tracking sales, supply chain, and marketing performance with visualization tools.</p>
-        <div class="tag-row">
           <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
-          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
         </div>
         <div class="btn-row">
-          <a href="#" class="btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
-          <a href="#" class="btn primary">Details</a>
-          <a href="#" class="btn success">Presentation</a>
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="Marketing_Sales_Dashboard.pptx" data-preview-title="FMCG sales & category performance dashboard" onclick="openProjectPreview(this)">Project Preview</button>
         </div>
       </div>
     </div>
  
     <div class="project-card" data-domain="fmcg" data-role="scientist">
-      <div class="project-image" style="background:#e3f4ec;">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#12704f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17h10"></path><rect x="1" y="6" width="15" height="10" rx="2"></rect><path d="M16 9h3l3 3v4h-2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="18" cy="17" r="2"></circle></svg>
+      <div class="project-image" style="background:linear-gradient(135deg,#ff9d6c,#f2703c);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 3.2a1 1 0 0 1 1 -1h1.7a1 1 0 0 1 1 .8l.4 1.9h14.1a1 1 0 0 1 1 1.25l-1.7 6.6a1.6 1.6 0 0 1 -1.55 1.2H8.4a1.6 1.6 0 0 1 -1.55 -1.25L4.9 4.4l-.3 -1.4H3.5a1 1 0 0 1 -1 -1z"></path><circle cx="9" cy="19.3" r="1.6"></circle><circle cx="17" cy="19.3" r="1.6"></circle></svg>
       </div>
       <div class="project-content">
         <div class="badge-row">
-          <span class="badge fmcg">FMCG</span>
+          <span class="badge domain-fmcg">FMCG & E-commerce</span>
+          <span class="badge role-scientist">Data Scientist</span>
         </div>
-        <p class="project-title">Region-wise product supply chain analysis</p>
-        <p class="project-desc">Built a Power BI dashboard analyzing regional supply chain performance, demand forecast, and inventory efficiency.</p>
+        <p class="project-title">Customer purchase pattern & churn model</p>
+        <p class="project-desc">Used EDA and classification models on retail transaction data to explain repeat-purchase behaviour and flag at-risk customers.</p>
         <div class="tag-row">
-          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
-          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>DAX</span>
-          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Data modeling</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
         </div>
         <div class="btn-row">
-          <a href="#" class="btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
-          <a href="#" class="btn primary">Details</a>
-          <a href="#" class="btn success">Presentation</a>
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fmcg-scientist.pdf" data-preview-title="Customer purchase pattern & churn model" onclick="openProjectPreview(this)">Project Preview</button>
         </div>
       </div>
     </div>
+ 
+    <div class="project-card" data-domain="fmcg" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff9d6c,#f2703c);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 3.2a1 1 0 0 1 1 -1h1.7a1 1 0 0 1 1 .8l.4 1.9h14.1a1 1 0 0 1 1 1.25l-1.7 6.6a1.6 1.6 0 0 1 -1.55 1.2H8.4a1.6 1.6 0 0 1 -1.55 -1.25L4.9 4.4l-.3 -1.4H3.5a1 1 0 0 1 -1 -1z"></path><circle cx="9" cy="19.3" r="1.6"></circle><circle cx="17" cy="19.3" r="1.6"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-fmcg">FMCG & E-commerce</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Demand forecasting pipeline with auto-retraining</p>
+        <p class="project-desc">Deployed a demand forecasting model behind an MLOps pipeline with scheduled retraining, versioning, and cloud monitoring.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fmcg-mlops.pdf" data-preview-title="Demand forecasting pipeline with auto-retraining" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fmcg" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff9d6c,#f2703c);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 3.2a1 1 0 0 1 1 -1h1.7a1 1 0 0 1 1 .8l.4 1.9h14.1a1 1 0 0 1 1 1.25l-1.7 6.6a1.6 1.6 0 0 1 -1.55 1.2H8.4a1.6 1.6 0 0 1 -1.55 -1.25L4.9 4.4l-.3 -1.4H3.5a1 1 0 0 1 -1 -1z"></path><circle cx="9" cy="19.3" r="1.6"></circle><circle cx="17" cy="19.3" r="1.6"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-fmcg">FMCG & E-commerce</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Packaging defect detection with CNNs</p>
+        <p class="project-desc">Trained a convolutional neural network to spot packaging and label defects on the production line from product images.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fmcg-dl.pdf" data-preview-title="Packaging defect detection with CNNs" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="healthcare" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#6fd4a0,#2fa871);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 21.2 L3.4 12.6a5.6 5.6 0 0 1 7.9 -7.9l.7 .7l.7 -.7a5.6 5.6 0 0 1 7.9 7.9z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-healthcare">Healthcare</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Hospital operations & patient flow dashboard</p>
+        <p class="project-desc">Built a dashboard analyzing admissions, bed occupancy, and department-wise patient flow to support capacity planning.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/healthcare-analyst.pdf" data-preview-title="Hospital operations & patient flow dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="healthcare" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#6fd4a0,#2fa871);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 21.2 L3.4 12.6a5.6 5.6 0 0 1 7.9 -7.9l.7 .7l.7 -.7a5.6 5.6 0 0 1 7.9 7.9z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-healthcare">Healthcare</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Patient readmission risk model</p>
+        <p class="project-desc">Engineered clinical and demographic features and trained models to estimate a patient's risk of 30-day readmission.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/healthcare-scientist.pdf" data-preview-title="Patient readmission risk model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="healthcare" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#6fd4a0,#2fa871);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 21.2 L3.4 12.6a5.6 5.6 0 0 1 7.9 -7.9l.7 .7l.7 -.7a5.6 5.6 0 0 1 7.9 7.9z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-healthcare">Healthcare</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Risk-scoring pipeline with monitoring</p>
+        <p class="project-desc">Packaged a patient risk-scoring model into a monitored pipeline with drift checks and scheduled retraining on new data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/healthcare-mlops.pdf" data-preview-title="Risk-scoring pipeline with monitoring" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="healthcare" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#6fd4a0,#2fa871);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 21.2 L3.4 12.6a5.6 5.6 0 0 1 7.9 -7.9l.7 .7l.7 -.7a5.6 5.6 0 0 1 7.9 7.9z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-healthcare">Healthcare</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Medical image classification with deep learning</p>
+        <p class="project-desc">Built a CNN-based classifier to flag anomalies in medical scans, evaluated against radiologist-labelled data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/healthcare-dl.pdf" data-preview-title="Medical image classification with deep learning" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="edtech" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#8f9bff,#4a55d1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 3.2 L23 8.6 L12 14 L1 8.6z"></path><path d="M5.5 10.6v4.6c0 1.7 3 3.4 6.5 3.4s6.5 -1.7 6.5 -3.4v-4.6l-6.5 3.2z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-edtech">EdTech</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Student engagement & course performance dashboard</p>
+        <p class="project-desc">Created a dashboard tracking course completion, engagement, and assessment scores across learner cohorts.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/edtech-analyst.pdf" data-preview-title="Student engagement & course performance dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="edtech" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#8f9bff,#4a55d1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 3.2 L23 8.6 L12 14 L1 8.6z"></path><path d="M5.5 10.6v4.6c0 1.7 3 3.4 6.5 3.4s6.5 -1.7 6.5 -3.4v-4.6l-6.5 3.2z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-edtech">EdTech</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Student dropout prediction model</p>
+        <p class="project-desc">Built a classification model on learning-activity data to identify students likely to drop out before course completion.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/edtech-scientist.pdf" data-preview-title="Student dropout prediction model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="edtech" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#8f9bff,#4a55d1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 3.2 L23 8.6 L12 14 L1 8.6z"></path><path d="M5.5 10.6v4.6c0 1.7 3 3.4 6.5 3.4s6.5 -1.7 6.5 -3.4v-4.6l-6.5 3.2z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-edtech">EdTech</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Recommendation pipeline for course content</p>
+        <p class="project-desc">Deployed a course-recommendation model as an automated pipeline with retraining triggered by new engagement data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/edtech-mlops.pdf" data-preview-title="Recommendation pipeline for course content" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="edtech" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#8f9bff,#4a55d1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 3.2 L23 8.6 L12 14 L1 8.6z"></path><path d="M5.5 10.6v4.6c0 1.7 3 3.4 6.5 3.4s6.5 -1.7 6.5 -3.4v-4.6l-6.5 3.2z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-edtech">EdTech</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Handwritten answer-sheet recognition</p>
+        <p class="project-desc">Trained a deep learning OCR model to digitize and score handwritten exam answer sheets.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/edtech-dl.pdf" data-preview-title="Handwritten answer-sheet recognition" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="telecom" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#7fb8f5,#2f6fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="10" r="2.3" fill="#fff"></circle><path d="M4.5 21.4c0 -6.2 3.4 -10.4 7.5 -10.4s7.5 4.2 7.5 10.4"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-telecom">Telecom</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Customer usage & revenue dashboard</p>
+        <p class="project-desc">Built a Power BI dashboard summarizing call, data, and billing patterns across subscriber segments.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/telecom-analyst.pdf" data-preview-title="Customer usage & revenue dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="telecom" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#7fb8f5,#2f6fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="10" r="2.3" fill="#fff"></circle><path d="M4.5 21.4c0 -6.2 3.4 -10.4 7.5 -10.4s7.5 4.2 7.5 10.4"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-telecom">Telecom</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Customer churn prediction model</p>
+        <p class="project-desc">Trained and evaluated classification models to predict telecom subscriber churn from usage and billing features.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/telecom-scientist.pdf" data-preview-title="Customer churn prediction model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="telecom" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#7fb8f5,#2f6fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="10" r="2.3" fill="#fff"></circle><path d="M4.5 21.4c0 -6.2 3.4 -10.4 7.5 -10.4s7.5 4.2 7.5 10.4"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-telecom">Telecom</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Churn model deployment pipeline</p>
+        <p class="project-desc">Deployed the churn model as an API with an automated retraining and monitoring pipeline on the cloud.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/telecom-mlops.pdf" data-preview-title="Churn model deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="telecom" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#7fb8f5,#2f6fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="10" r="2.3" fill="#fff"></circle><path d="M4.5 21.4c0 -6.2 3.4 -10.4 7.5 -10.4s7.5 4.2 7.5 10.4"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-telecom">Telecom</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Network anomaly detection with deep learning</p>
+        <p class="project-desc">Built a deep learning model on network signal data to flag anomalies indicating potential outages or fraud.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/telecom-dl.pdf" data-preview-title="Network anomaly detection with deep learning" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="automobile" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#8fa7c7,#4c6a99);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4.2 17.2H2.5v-4.9c0 -.7 .4 -1.3 1 -1.6l1.7 -4.2a2 2 0 0 1 1.9 -1.3h9.8a2 2 0 0 1 1.9 1.3l1.7 4.2c.6 .3 1 .9 1 1.6v4.9h-1.7"></path><circle cx="7.2" cy="17.2" r="2.1"></circle><circle cx="16.8" cy="17.2" r="2.1"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-automobile">Automobile</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Vehicle sales & service performance dashboard</p>
+        <p class="project-desc">Built a dashboard tracking vehicle sales, service centre performance, and warranty claims across regions.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/automobile-analyst.pdf" data-preview-title="Vehicle sales & service performance dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="automobile" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#8fa7c7,#4c6a99);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4.2 17.2H2.5v-4.9c0 -.7 .4 -1.3 1 -1.6l1.7 -4.2a2 2 0 0 1 1.9 -1.3h9.8a2 2 0 0 1 1.9 1.3l1.7 4.2c.6 .3 1 .9 1 1.6v4.9h-1.7"></path><circle cx="7.2" cy="17.2" r="2.1"></circle><circle cx="16.8" cy="17.2" r="2.1"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-automobile">Automobile</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Predictive maintenance model</p>
+        <p class="project-desc">Trained a model on sensor and service-history data to predict component failures before they occur.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/automobile-scientist.pdf" data-preview-title="Predictive maintenance model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="automobile" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#8fa7c7,#4c6a99);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4.2 17.2H2.5v-4.9c0 -.7 .4 -1.3 1 -1.6l1.7 -4.2a2 2 0 0 1 1.9 -1.3h9.8a2 2 0 0 1 1.9 1.3l1.7 4.2c.6 .3 1 .9 1 1.6v4.9h-1.7"></path><circle cx="7.2" cy="17.2" r="2.1"></circle><circle cx="16.8" cy="17.2" r="2.1"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-automobile">Automobile</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Maintenance model deployment pipeline</p>
+        <p class="project-desc">Deployed the predictive maintenance model with an automated pipeline for scheduled retraining and monitoring.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/automobile-mlops.pdf" data-preview-title="Maintenance model deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="automobile" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#8fa7c7,#4c6a99);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4.2 17.2H2.5v-4.9c0 -.7 .4 -1.3 1 -1.6l1.7 -4.2a2 2 0 0 1 1.9 -1.3h9.8a2 2 0 0 1 1.9 1.3l1.7 4.2c.6 .3 1 .9 1 1.6v4.9h-1.7"></path><circle cx="7.2" cy="17.2" r="2.1"></circle><circle cx="16.8" cy="17.2" r="2.1"></circle></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-automobile">Automobile</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Vehicle damage detection from images</p>
+        <p class="project-desc">Built a CNN model that detects and classifies vehicle body damage from inspection photos.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/automobile-dl.pdf" data-preview-title="Vehicle damage detection from images" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="travel" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff8a8a,#e2453f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4 8.5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5h-1.6v-7.5a.4 .4 0 0 0 -.4 -.4H6a.4 .4 0 0 0 -.4 .4v7.5H4z"></path><rect x="4" y="10.2" width="16" height="5.8" rx="1"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-travel">Travel & Hospitality</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Booking trends & revenue dashboard</p>
+        <p class="project-desc">Built a dashboard analyzing booking volumes, seasonal trends, and revenue by destination and channel.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/travel-analyst.pdf" data-preview-title="Booking trends & revenue dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="travel" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff8a8a,#e2453f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4 8.5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5h-1.6v-7.5a.4 .4 0 0 0 -.4 -.4H6a.4 .4 0 0 0 -.4 .4v7.5H4z"></path><rect x="4" y="10.2" width="16" height="5.8" rx="1"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-travel">Travel & Hospitality</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Hotel demand forecasting model</p>
+        <p class="project-desc">Built a forecasting model to predict hotel occupancy and pricing demand using historical booking data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/travel-scientist.pdf" data-preview-title="Hotel demand forecasting model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="travel" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff8a8a,#e2453f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4 8.5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5h-1.6v-7.5a.4 .4 0 0 0 -.4 -.4H6a.4 .4 0 0 0 -.4 .4v7.5H4z"></path><rect x="4" y="10.2" width="16" height="5.8" rx="1"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-travel">Travel & Hospitality</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Demand forecasting deployment pipeline</p>
+        <p class="project-desc">Deployed the demand forecasting model as an automated pipeline with retraining on fresh booking data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/travel-mlops.pdf" data-preview-title="Demand forecasting deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="travel" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#ff8a8a,#e2453f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M4 8.5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5h-1.6v-7.5a.4 .4 0 0 0 -.4 -.4H6a.4 .4 0 0 0 -.4 .4v7.5H4z"></path><rect x="4" y="10.2" width="16" height="5.8" rx="1"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-travel">Travel & Hospitality</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Destination image classification</p>
+        <p class="project-desc">Trained a deep learning model to auto-tag and categorize travel destination photos for a booking platform.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/travel-dl.pdf" data-preview-title="Destination image classification" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="real-estate" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#d4a373,#a9713b);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8 L21.5 11h-2.2v9.2h-4.6v-6.4H9.3v6.4H4.7V11H2.5z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-real-estate">Real Estate</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Property listing & pricing dashboard</p>
+        <p class="project-desc">Built a dashboard tracking property listings, price trends, and inventory across neighbourhoods.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/real-estate-analyst.pdf" data-preview-title="Property listing & pricing dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="real-estate" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#d4a373,#a9713b);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8 L21.5 11h-2.2v9.2h-4.6v-6.4H9.3v6.4H4.7V11H2.5z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-real-estate">Real Estate</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Property price prediction model</p>
+        <p class="project-desc">Built a regression model to estimate property prices from location, size, and amenity features.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/real-estate-scientist.pdf" data-preview-title="Property price prediction model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="real-estate" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#d4a373,#a9713b);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8 L21.5 11h-2.2v9.2h-4.6v-6.4H9.3v6.4H4.7V11H2.5z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-real-estate">Real Estate</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Price model deployment pipeline</p>
+        <p class="project-desc">Deployed the price prediction model as an API with an automated retraining pipeline on new listings data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/real-estate-mlops.pdf" data-preview-title="Price model deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="real-estate" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#d4a373,#a9713b);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8 L21.5 11h-2.2v9.2h-4.6v-6.4H9.3v6.4H4.7V11H2.5z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-real-estate">Real Estate</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Property image quality & staging classifier</p>
+        <p class="project-desc">Trained a CNN to classify property listing photos by quality and staging to improve listing appeal.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/real-estate-dl.pdf" data-preview-title="Property image quality & staging classifier" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="media" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#b984ee,#8a3fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><rect x="3" y="9.4" width="18" height="9.8" rx="1"></rect><path d="M10 12.4l5 2.4l-5 2.4z" fill="#8a3fd1"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-media">Media & Entertainment</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Content engagement & viewership dashboard</p>
+        <p class="project-desc">Built a dashboard tracking viewership, engagement, and ad performance across content categories.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/media-analyst.pdf" data-preview-title="Content engagement & viewership dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="media" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#b984ee,#8a3fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><rect x="3" y="9.4" width="18" height="9.8" rx="1"></rect><path d="M10 12.4l5 2.4l-5 2.4z" fill="#8a3fd1"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-media">Media & Entertainment</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Subscriber churn prediction model</p>
+        <p class="project-desc">Trained a churn model on viewing-history and subscription data to flag subscribers at risk of leaving.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/media-scientist.pdf" data-preview-title="Subscriber churn prediction model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="media" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#b984ee,#8a3fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><rect x="3" y="9.4" width="18" height="9.8" rx="1"></rect><path d="M10 12.4l5 2.4l-5 2.4z" fill="#8a3fd1"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-media">Media & Entertainment</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Churn model deployment pipeline</p>
+        <p class="project-desc">Deployed the churn model with an automated MLOps pipeline for monitoring and scheduled retraining.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/media-mlops.pdf" data-preview-title="Churn model deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="media" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#b984ee,#8a3fd1);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><rect x="3" y="9.4" width="18" height="9.8" rx="1"></rect><path d="M10 12.4l5 2.4l-5 2.4z" fill="#8a3fd1"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-media">Media & Entertainment</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Content recommendation with deep learning</p>
+        <p class="project-desc">Built a deep learning recommender that suggests content based on a viewer's watch history.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/media-dl.pdf" data-preview-title="Content recommendation with deep learning" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="bfsi" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#f3c04c,#d99b12);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5 L22 8h-20z"></path><rect x="2" y="19.5" width="20" height="2"></rect><rect x="4.5" y="10" width="2.4" height="8"></rect><rect x="10.8" y="10" width="2.4" height="8"></rect><rect x="17.1" y="10" width="2.4" height="8"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-bfsi">BFSI</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Loan portfolio & risk dashboard</p>
+        <p class="project-desc">Built a dashboard summarizing loan disbursement, repayment, and delinquency trends across segments.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/bfsi-analyst.pdf" data-preview-title="Loan portfolio & risk dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="bfsi" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#f3c04c,#d99b12);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5 L22 8h-20z"></path><rect x="2" y="19.5" width="20" height="2"></rect><rect x="4.5" y="10" width="2.4" height="8"></rect><rect x="10.8" y="10" width="2.4" height="8"></rect><rect x="17.1" y="10" width="2.4" height="8"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-bfsi">BFSI</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Credit risk & fraud detection model</p>
+        <p class="project-desc">Trained classification models on transaction and applicant data to flag credit risk and potential fraud.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/bfsi-scientist.pdf" data-preview-title="Credit risk & fraud detection model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="bfsi" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#f3c04c,#d99b12);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5 L22 8h-20z"></path><rect x="2" y="19.5" width="20" height="2"></rect><rect x="4.5" y="10" width="2.4" height="8"></rect><rect x="10.8" y="10" width="2.4" height="8"></rect><rect x="17.1" y="10" width="2.4" height="8"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-bfsi">BFSI</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Fraud detection deployment pipeline</p>
+        <p class="project-desc">Deployed the fraud detection model as a real-time scoring API with monitoring and automated retraining.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/bfsi-mlops.pdf" data-preview-title="Fraud detection deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="bfsi" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#f3c04c,#d99b12);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5 L22 8h-20z"></path><rect x="2" y="19.5" width="20" height="2"></rect><rect x="4.5" y="10" width="2.4" height="8"></rect><rect x="10.8" y="10" width="2.4" height="8"></rect><rect x="17.1" y="10" width="2.4" height="8"></rect></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-bfsi">BFSI</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Cheque & signature verification with deep learning</p>
+        <p class="project-desc">Built a deep learning model to verify handwritten signatures and extract cheque details from scanned images.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/bfsi-dl.pdf" data-preview-title="Cheque & signature verification with deep learning" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fashion" data-role="analyst">
+      <div class="project-image" style="background:linear-gradient(135deg,#f5a3c7,#d6488f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 4.6c-.6 1 -1.7 1.6 -3 1.6c-2.5 0 -6.2 1.7 -7.7 5.2a1 1 0 0 0 .5 1.3l3 1.3v6.8a1 1 0 0 0 1 1h12.4a1 1 0 0 0 1 -1v-6.8l3 -1.3a1 1 0 0 0 .5 -1.3c-1.5 -3.5 -5.2 -5.2 -7.7 -5.2c-1.3 0 -2.4 -.6 -3 -1.6z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-fashion">Fashion & Design</span>
+          <span class="badge role-analyst">Data Analyst</span>
+        </div>
+        <p class="project-title">Apparel sales & trend dashboard</p>
+        <p class="project-desc">Built a dashboard tracking apparel sales, seasonal trends, and inventory turnover across categories.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>SQL</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Power BI</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Excel</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fashion-analyst.pdf" data-preview-title="Apparel sales & trend dashboard" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fashion" data-role="scientist">
+      <div class="project-image" style="background:linear-gradient(135deg,#f5a3c7,#d6488f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 4.6c-.6 1 -1.7 1.6 -3 1.6c-2.5 0 -6.2 1.7 -7.7 5.2a1 1 0 0 0 .5 1.3l3 1.3v6.8a1 1 0 0 0 1 1h12.4a1 1 0 0 0 1 -1v-6.8l3 -1.3a1 1 0 0 0 .5 -1.3c-1.5 -3.5 -5.2 -5.2 -7.7 -5.2c-1.3 0 -2.4 -.6 -3 -1.6z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-fashion">Fashion & Design</span>
+          <span class="badge role-scientist">Data Scientist</span>
+        </div>
+        <p class="project-title">Trend & demand forecasting model</p>
+        <p class="project-desc">Built a forecasting model on historical sales data to anticipate demand for upcoming fashion trends.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Python</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Scikit-learn</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>EDA</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fashion-scientist.pdf" data-preview-title="Trend & demand forecasting model" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fashion" data-role="mlops">
+      <div class="project-image" style="background:linear-gradient(135deg,#f5a3c7,#d6488f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 4.6c-.6 1 -1.7 1.6 -3 1.6c-2.5 0 -6.2 1.7 -7.7 5.2a1 1 0 0 0 .5 1.3l3 1.3v6.8a1 1 0 0 0 1 1h12.4a1 1 0 0 0 1 -1v-6.8l3 -1.3a1 1 0 0 0 .5 -1.3c-1.5 -3.5 -5.2 -5.2 -7.7 -5.2c-1.3 0 -2.4 -.6 -3 -1.6z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-fashion">Fashion & Design</span>
+          <span class="badge role-mlops">ML & MLOps</span>
+        </div>
+        <p class="project-title">Demand forecasting deployment pipeline</p>
+        <p class="project-desc">Deployed the trend forecasting model as an automated pipeline with scheduled retraining on new sales data.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>MLflow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Docker</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Azure</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fashion-mlops.pdf" data-preview-title="Demand forecasting deployment pipeline" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="project-card" data-domain="fashion" data-role="dl">
+      <div class="project-image" style="background:linear-gradient(135deg,#f5a3c7,#d6488f);">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#fff"><path d="M12 4.6c-.6 1 -1.7 1.6 -3 1.6c-2.5 0 -6.2 1.7 -7.7 5.2a1 1 0 0 0 .5 1.3l3 1.3v6.8a1 1 0 0 0 1 1h12.4a1 1 0 0 0 1 -1v-6.8l3 -1.3a1 1 0 0 0 .5 -1.3c-1.5 -3.5 -5.2 -5.2 -7.7 -5.2c-1.3 0 -2.4 -.6 -3 -1.6z"></path></svg>
+      </div>
+      <div class="project-content">
+        <div class="badge-row">
+          <span class="badge domain-fashion">Fashion & Design</span>
+          <span class="badge role-dl">Deep Learning</span>
+        </div>
+        <p class="project-title">Apparel image classification & tagging</p>
+        <p class="project-desc">Trained a CNN to automatically classify and tag apparel product photos by category, colour, and style.</p>
+        <div class="tag-row">
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>PyTorch</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>TensorFlow</span>
+          <span class="tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="14" y1="4" x2="10" y2="20"></line></svg>Keras</span>
+        </div>
+        <div class="btn-row">
+          <a href="#" class="btn github"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-right:6px;"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path></svg>GitHub</a>
+          <button type="button" class="btn success" data-preview-src="projects/fashion-dl.pdf" data-preview-title="Apparel image classification & tagging" onclick="openProjectPreview(this)">Project Preview</button>
+        </div>
+      </div>
+    </div>
+      </div>
  
     </div>
  
@@ -1064,7 +2158,208 @@
       if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
     }, true);
   });
+
+  // ---------- Project preview pop-up (centered, swipeable through all projects) ----------
+  (function () {
+    var backdrop = document.getElementById('preview-backdrop');
+    var panel = document.getElementById('preview-panel');
+    var dragHandle = document.getElementById('preview-drag-handle');
+    var closeBtn = document.getElementById('preview-close-btn');
+    var titleEl = document.getElementById('preview-title');
+    var counterEl = document.getElementById('preview-counter');
+    var frameHolder = document.getElementById('preview-frame-holder');
+    var edgePrev = document.getElementById('preview-edge-prev');
+    var edgeNext = document.getElementById('preview-edge-next');
+    var prevBtn = document.getElementById('preview-prev-btn');
+    var nextBtn = document.getElementById('preview-next-btn');
+
+    // Build the ordered list of every project on the page once, so swiping/
+    // arrow-navigating inside the pop-up walks through the whole project list
+    // without ever closing the pop-up.
+    var projects = Array.prototype.map.call(
+      document.querySelectorAll('[data-preview-src]'),
+      function (el) {
+        return {
+          src: el.getAttribute('data-preview-src'),
+          title: el.getAttribute('data-preview-title') || 'Project preview'
+        };
+      }
+    );
+    var currentIndex = 0;
+
+    function officeEmbedSrc(absoluteUrl) {
+      return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(absoluteUrl);
+    }
+
+    function renderEmptyState(fileUrl) {
+      frameHolder.innerHTML =
+        '<div class="preview-empty-state">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0 -2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2V8z"></path><path d="M14 2v6h6"></path></svg>' +
+        '<p>No preview file uploaded yet for this project.<br>Add a PDF or PPTX at <code>' + fileUrl + '</code> and this pop-up will show it automatically.</p>' +
+        '</div>';
+    }
+
+    function renderIframe(src) {
+      frameHolder.innerHTML = '';
+      var iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.setAttribute('title', 'Project preview');
+      frameHolder.appendChild(iframe);
+    }
+
+    function loadCurrent() {
+      var project = projects[currentIndex];
+      if (!project) return;
+      titleEl.textContent = project.title;
+      counterEl.textContent = (currentIndex + 1) + ' / ' + projects.length;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === projects.length - 1;
+      frameHolder.innerHTML = '<div class="preview-empty-state"><p>Loading preview…</p></div>';
+
+      var fileUrl = project.src;
+      fetch(fileUrl, { method: 'HEAD' }).then(function (res) {
+        if (!res.ok) { renderEmptyState(fileUrl); return; }
+        var lower = fileUrl.toLowerCase();
+        var absoluteUrl = new URL(fileUrl, window.location.href).href;
+        if (lower.endsWith('.pdf')) {
+          renderIframe(absoluteUrl);
+        } else if (lower.endsWith('.ppt') || lower.endsWith('.pptx')) {
+          renderIframe(officeEmbedSrc(absoluteUrl));
+        } else {
+          renderEmptyState(fileUrl);
+        }
+      }).catch(function () {
+        renderEmptyState(fileUrl);
+      });
+    }
+
+    function goTo(index) {
+      if (index < 0 || index >= projects.length) return;
+      currentIndex = index;
+      loadCurrent();
+    }
+    function goNext() { goTo(currentIndex + 1); }
+    function goPrev() { goTo(currentIndex - 1); }
+
+    window.openProjectPreview = function (btn) {
+      var fileUrl = btn.getAttribute('data-preview-src');
+      var startIndex = projects.findIndex(function (p) { return p.src === fileUrl; });
+      currentIndex = startIndex >= 0 ? startIndex : 0;
+
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      loadCurrent();
+    };
+
+    function closePreview() {
+      backdrop.classList.remove('open');
+      panel.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(function () { frameHolder.innerHTML = ''; }, 250);
+    }
+
+    closeBtn.addEventListener('click', closePreview);
+    backdrop.addEventListener('click', closePreview);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    edgePrev.addEventListener('click', goPrev);
+    edgeNext.addEventListener('click', goNext);
+
+    document.addEventListener('keydown', function (e) {
+      if (!panel.classList.contains('open')) return;
+      if (e.key === 'Escape') closePreview();
+      if (e.key === 'ArrowLeft') goPrev();
+      if (e.key === 'ArrowRight') goNext();
+    });
+
+    // Swipe left/right on the edge zones to move through the project list,
+    // and swipe down on the drag handle / header to close the pop-up.
+    // (The centre of the pop-up is left free for the embedded PDF/PPT viewer's
+    // own scrolling and zooming, since that content loads in its own document
+    // and can't be swiped through from the outside.)
+    function attachSwipe(el, onSwipeLeft, onSwipeRight, onSwipeDown) {
+      var startX = 0, startY = 0, tracking = false;
+      el.addEventListener('touchstart', function (e) {
+        tracking = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      el.addEventListener('touchend', function (e) {
+        if (!tracking) return;
+        tracking = false;
+        var dx = e.changedTouches[0].clientX - startX;
+        var dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+          if (dx < 0 && onSwipeLeft) onSwipeLeft();
+          if (dx > 0 && onSwipeRight) onSwipeRight();
+        } else if (dy > 60 && onSwipeDown) {
+          onSwipeDown();
+        }
+      });
+    }
+
+    attachSwipe(edgePrev, goNext, goPrev, closePreview);
+    attachSwipe(edgeNext, goNext, goPrev, closePreview);
+
+    // Drag the handle down to close (mobile-friendly), same interaction as before.
+    var dragStartY = 0, currentY = 0, isDragging = false;
+    function onDragStart(e) {
+      isDragging = true;
+      dragStartY = (e.touches ? e.touches[0].clientY : e.clientY);
+      panel.classList.add('dragging');
+    }
+    function onDragMove(e) {
+      if (!isDragging) return;
+      currentY = (e.touches ? e.touches[0].clientY : e.clientY);
+      var delta = Math.max(0, currentY - dragStartY);
+      panel.style.transform = 'translate(-50%, calc(-50% + ' + delta + 'px))';
+    }
+    function onDragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      panel.classList.remove('dragging');
+      var delta = Math.max(0, currentY - dragStartY);
+      panel.style.transform = '';
+      if (delta > 110) closePreview();
+      dragStartY = 0;
+      currentY = 0;
+    }
+    dragHandle.addEventListener('touchstart', onDragStart, { passive: true });
+    dragHandle.addEventListener('touchmove', onDragMove, { passive: true });
+    dragHandle.addEventListener('touchend', onDragEnd);
+    dragHandle.addEventListener('mousedown', onDragStart);
+    window.addEventListener('mousemove', onDragMove);
+    window.addEventListener('mouseup', onDragEnd);
+  })();
 </script>
+
+<div class="preview-backdrop" id="preview-backdrop"></div>
+<div class="preview-panel" id="preview-panel" role="dialog" aria-modal="true" aria-label="Project preview">
+  <div class="preview-drag-handle" id="preview-drag-handle"><span></span></div>
+  <div class="preview-header">
+    <div class="preview-header-text">
+      <p class="preview-eyebrow">Project preview <span class="preview-counter" id="preview-counter">1 / 40</span></p>
+      <p class="preview-title" id="preview-title">Project preview</p>
+    </div>
+    <button type="button" class="preview-close" id="preview-close-btn" aria-label="Close preview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+    </button>
+  </div>
+  <div class="preview-body" id="preview-body">
+    <div class="preview-edge prev" id="preview-edge-prev">
+      <button type="button" class="preview-nav-btn" id="preview-prev-btn" aria-label="Previous project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
+      </button>
+    </div>
+    <div class="preview-edge next" id="preview-edge-next">
+      <button type="button" class="preview-nav-btn" id="preview-next-btn" aria-label="Next project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </button>
+    </div>
+    <div class="preview-frame-holder" id="preview-frame-holder"></div>
+  </div>
+</div>
  
 </body>
 
@@ -1084,15 +2379,4 @@
   <p class="footer-copy">© 2026 Priyanka De. Built with Python, Power BI, and a lot of coffee.</p>
 </footer>
 
-
-
-
-
-
-
-
-
-
-
-  
 </html>
