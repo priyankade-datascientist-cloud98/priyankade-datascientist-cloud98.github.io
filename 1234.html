@@ -2507,10 +2507,16 @@
 
   closeBtn.addEventListener('click', closePreview);
   backdrop.addEventListener('click', closePreview);
-  prevBtn.addEventListener('click', prevPage);
-  nextBtn.addEventListener('click', nextPage);
-  edgePrev.addEventListener('click', prevPage);
-  edgeNext.addEventListener('click', nextPage);
+  prevBtn.addEventListener('click', function (e) { e.stopPropagation(); prevPage(); });
+nextBtn.addEventListener('click', function (e) { e.stopPropagation(); nextPage(); });
+
+// Clicks on the edge strip itself (not the button) also navigate
+edgePrev.addEventListener('click', function (e) {
+  if (e.target === edgePrev) prevPage();
+});
+edgeNext.addEventListener('click', function (e) {
+  if (e.target === edgeNext) nextPage();
+});
 
   document.addEventListener('keydown', function (e) {
     if (!panel.classList.contains('open')) return;
