@@ -1956,7 +1956,37 @@
  
   </div>
 </div>
- 
+
+
+
+<div class="preview-backdrop" id="preview-backdrop"></div>
+<div class="preview-panel" id="preview-panel" role="dialog" aria-modal="true" aria-label="Project preview">
+  <div class="preview-drag-handle" id="preview-drag-handle"><span></span></div>
+  <div class="preview-header">
+    <div class="preview-header-text">
+      <p class="preview-eyebrow">Project preview <span class="preview-counter" id="preview-counter">1 / 40</span></p>
+      <p class="preview-title" id="preview-title">Project preview</p>
+    </div>
+    <button type="button" class="preview-close" id="preview-close-btn" aria-label="Close preview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+    </button>
+  </div>
+  <div class="preview-body" id="preview-body">
+    <div class="preview-edge prev" id="preview-edge-prev">
+      <button type="button" class="preview-nav-btn" id="preview-prev-btn" aria-label="Previous project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
+      </button>
+    </div>
+    <div class="preview-edge next" id="preview-edge-next">
+      <button type="button" class="preview-nav-btn" id="preview-next-btn" aria-label="Next project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </button>
+    </div>
+    <div class="preview-frame-holder" id="preview-frame-holder"></div>
+  </div>
+</div>
+
+  
 <script>
   // Ambient sparkles drifting slowly up the page — purely decorative
   (function () {
@@ -2334,32 +2364,7 @@
   })();
 </script>
 
-<div class="preview-backdrop" id="preview-backdrop"></div>
-<div class="preview-panel" id="preview-panel" role="dialog" aria-modal="true" aria-label="Project preview">
-  <div class="preview-drag-handle" id="preview-drag-handle"><span></span></div>
-  <div class="preview-header">
-    <div class="preview-header-text">
-      <p class="preview-eyebrow">Project preview <span class="preview-counter" id="preview-counter">1 / 40</span></p>
-      <p class="preview-title" id="preview-title">Project preview</p>
-    </div>
-    <button type="button" class="preview-close" id="preview-close-btn" aria-label="Close preview">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
-    </button>
-  </div>
-  <div class="preview-body" id="preview-body">
-    <div class="preview-edge prev" id="preview-edge-prev">
-      <button type="button" class="preview-nav-btn" id="preview-prev-btn" aria-label="Previous project">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
-      </button>
-    </div>
-    <div class="preview-edge next" id="preview-edge-next">
-      <button type="button" class="preview-nav-btn" id="preview-next-btn" aria-label="Next project">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
-      </button>
-    </div>
-    <div class="preview-frame-holder" id="preview-frame-holder"></div>
-  </div>
-</div>
+
  
 </body>
 
@@ -2380,3 +2385,5 @@
 </footer>
 
 </html>
+
+
